@@ -1,33 +1,32 @@
 import React from "react"
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap'
+import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from "react-bootstrap"
 
 export default class AppNavbar extends React.Component {
-  render() {
-    return (
-      <Navbar inverse>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href="#">Gedis</a>
-          </Navbar.Brand>
-        </Navbar.Header>
-        <Navbar.Collapse>
-          <Nav>
-            <NavItem eventKey={1} href="#">Link</NavItem>
-            <NavItem eventKey={2} href="#">Link</NavItem>
-            <NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
-              <MenuItem eventKey={3.1}>Action</MenuItem>
-              <MenuItem eventKey={3.2}>Another action</MenuItem>
-              <MenuItem eventKey={3.3}>Something else here</MenuItem>
-              <MenuItem divider />
-              <MenuItem eventKey={3.3}>Separated link</MenuItem>
-            </NavDropdown>
-          </Nav>
-          <Nav pullRight>
-            <NavItem eventKey={1} href="#">Link Right</NavItem>
-            <NavItem eventKey={2} href="#">Link Right</NavItem>
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
-    )
-  }
+    render() {
+        return (
+            <Navbar inverse>
+                <Navbar.Header>
+                    <Navbar.Brand>
+                        <a href="#">Overview</a>
+                    </Navbar.Brand>
+                </Navbar.Header>
+                <Navbar.Collapse>
+                    <Nav>
+                        <NavItem eventKey={1} href="#">New Goal</NavItem>
+                        <NavDropdown eventKey={2} title="Help" id="basic-nav-dropdown">
+                            <MenuItem disabled eventKey={2.1}>Action</MenuItem>
+                            <MenuItem disabled eventKey={2.2}>Faq</MenuItem>
+                            <MenuItem disabled eventKey={2.3}>Instructions</MenuItem>
+                            <MenuItem divider/>
+                            <MenuItem disabled eventKey={2.3}>Contact</MenuItem>
+                        </NavDropdown>
+                    </Nav>
+                    <Nav pullRight>
+                        <NavItem disabled eventKey={1} href="#">Import</NavItem>
+                        <NavItem disabled eventKey={2} href="#">Export</NavItem>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+        )
+    }
 }
