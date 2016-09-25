@@ -1,0 +1,26 @@
+{
+  "name": "gedis",
+  "version": "1.0.0",
+  "description": "get-disciplined",
+  "main": "app.js",
+  "scripts": {
+    "build": "./node_modules/.bin/babel src -d lib",
+    "start": "webpack-dev-server"
+  },
+  "author": "halafi",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^15.3.2",
+    "react-bootstrap": "^0.30.3",
+    "react-dom": "^15.3.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-latest": "^6.14.0",
+    "babel-preset-react": "^6.11.1",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.1"
+  }
+}
