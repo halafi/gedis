@@ -7,21 +7,22 @@ export default class AppNavbar extends React.Component {
             <Navbar inverse>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="#">Overview</a>
+                        <a href="#">My farm</a>
                     </Navbar.Brand>
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav>
-                        <NavItem eventKey={1} href="#">New Goal</NavItem>
-                        <NavDropdown eventKey={2} title="Help" id="basic-nav-dropdown">
-                            <MenuItem disabled eventKey={2.1}>Action</MenuItem>
-                            <MenuItem disabled eventKey={2.2}>Faq</MenuItem>
-                            <MenuItem disabled eventKey={2.3}>Instructions</MenuItem>
-                            <MenuItem divider/>
-                            <MenuItem disabled eventKey={2.3}>Contact</MenuItem>
-                        </NavDropdown>
+                        <NavItem eventKey={1} href="#">Build</NavItem>
+                        <NavItem eventKey={2} href="#">Research</NavItem>
                     </Nav>
                     <Nav pullRight>
+                        <NavDropdown eventKey={3} title="Help" id="basic-nav-dropdown">
+                            <MenuItem disabled eventKey={3.1}>Action</MenuItem>
+                            <MenuItem disabled eventKey={3.2}>Faq</MenuItem>
+                            <MenuItem disabled eventKey={3.3}>Instructions</MenuItem>
+                            <MenuItem divider/>
+                            <MenuItem disabled eventKey={3.3}>Contact</MenuItem>
+                        </NavDropdown>
                         <NavItem disabled eventKey={1} href="#">Import</NavItem>
                         <NavItem disabled eventKey={2} href="#">Export</NavItem>
                     </Nav>
