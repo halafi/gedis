@@ -9,6 +9,7 @@ export default class AppNavbar extends React.Component {
     work() {
     }
     render() {
+        const { game } = this.props
         return (
             <Navbar inverse>
                 <Navbar.Header>
@@ -23,7 +24,7 @@ export default class AppNavbar extends React.Component {
                         <NavItem eventKey={3} onClick={this.work}>Work</NavItem>
                     </Nav>
                     <Nav pullRight>
-                        <NavItem>Credits: {this.props.game.gameReducer.credits}</NavItem>
+                        <NavItem>Credits: {game.gameReducer.credits}</NavItem>
                         {/*<NavDropdown disabled eventKey={3} title="Help" id="basic-nav-dropdown">*/}
                             {/*<MenuItem eventKey={3.1}>Action</MenuItem>*/}
                             {/*<MenuItem eventKey={3.2}>Faq</MenuItem>*/}

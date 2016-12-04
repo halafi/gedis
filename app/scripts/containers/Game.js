@@ -1,4 +1,4 @@
-import {Record, Map} from 'immutable'
+import {Record} from 'immutable'
 
 const GameRecord = new Record({
     credits: 0,
