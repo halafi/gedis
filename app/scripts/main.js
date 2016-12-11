@@ -1,6 +1,6 @@
 import React from "react"
 import { createStore } from "redux"
-import { Provider} from "react-redux"
+import { Provider } from "react-redux"
 import ReactDOM from "react-dom"
 import { Router, Route, hashHistory } from "react-router"
 import immutable from "immutable"

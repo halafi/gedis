@@ -12,7 +12,8 @@
     "start": "webpack-dev-server",
     "eslint": "eslint '**/*.js'",
     "eslint:fix": "eslint '**/*.js' --fix",
-    "eslint:errors": "eslint '**/*.js' --quiet"
+    "eslint:errors": "eslint '**/*.js' --quiet",
+    "eslint:staged": "staged-files '**/*.js' -- node_modules/.bin/eslint "
   },
   "pre-commit": [
     "eslint:errors"
@@ -45,6 +46,7 @@
     "eslint-plugin-react": "^6.8.0",
     "pre-commit": "^1.2.0",
     "redux-devtools": "^3.3.1",
+    "staged-files": "^0.1.2",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   }
