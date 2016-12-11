@@ -1,14 +1,9 @@
 import React from "react"
+
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from "react-bootstrap"
 
-class AppNavbar extends React.Component {
-	static work() {
-		console.log("I work")
-	}
-	// constructor() {
-	// 	super()
-	// this.work = this.work.bind(this)
-	// }
+export default class AppNavbar extends React.Component {
+
 	render() {
 		const { game } = this.props
 
@@ -23,10 +18,10 @@ class AppNavbar extends React.Component {
 					<Nav>
 						<NavItem eventKey={1} href="#">Build</NavItem>
 						<NavItem eventKey={2} href="#">Research</NavItem>
-						<NavItem eventKey={3} onClick={this.work}>Work</NavItem>
+						<NavItem eventKey={3} href="#">Work</NavItem>
 					</Nav>
 					<Nav pullRight>
-						<NavItem>Credits: {game.gameReducer.credits}</NavItem>
+						<NavItem>Credits: {game.credits}</NavItem>
 						{/*<NavDropdown disabled eventKey={3} title="Help" id="basic-nav-dropdown">*/}
 						{/*<MenuItem eventKey={3.1}>Action</MenuItem>*/}
 						{/*<MenuItem eventKey={3.2}>Faq</MenuItem>*/}
@@ -45,5 +40,3 @@ class AppNavbar extends React.Component {
 AppNavbar.propTypes = {
 	game: React.PropTypes.object,
 }
-
-export default AppNavbar
