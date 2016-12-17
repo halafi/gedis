@@ -16,11 +16,8 @@
     "eslint:fix": "eslint '**/*.js' --fix",
     "eslint:errors": "eslint '**/*.js' --quiet",
     "eslint:staged": "eslint staged-files '**/*.js' --quiet",
-    "echo": "echo COMITTING..."
   },
-  "pre-commit": [
-    "echo"
-  ],
+  "pre-commit": [],
   "dependencies": {
     "immutable": "^3.8.1",
     "immutable-devtools": "0.0.7",
