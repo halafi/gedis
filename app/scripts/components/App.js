@@ -1,11 +1,13 @@
 import React from "react"
 import { Container, Button, Row, Col } from "reactstrap"
 import { connect } from "react-redux"
+import { ReactFireMixin } from "reactfire"
 
 import AppNavbar from "./AppNavbar.js"
 import { incrementCredits } from "../actions/GameActions"
 import { gameSelector } from "../stores/selectors/gameSelector"
 
+@ReactFireMixin
 class App extends React.Component {
 	constructor(props) {
 		super(props)
