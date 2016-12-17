@@ -1,4 +1,4 @@
-import Game from "../../containers/Game"
+import Game from "../../models/Game"
 
 export default (game = new Game(), action) => {
 	switch (action.type) {
