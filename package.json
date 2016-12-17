@@ -12,8 +12,7 @@
     "start": "webpack-dev-server",
     "eslint": "eslint '**/*.js'",
     "eslint:fix": "eslint '**/*.js' --fix",
-    "eslint:errors": "eslint '**/*.js' --quiet",
-    "eslint:staged": "staged-files '**/*.js' -- node_modules/.bin/eslint "
+    "eslint:errors": "eslint '**/*.js' --quiet"
   },
   "pre-commit": [
     "eslint:errors"
@@ -25,10 +24,12 @@
     "immutable-devtools": "0.0.7",
     "json-loader": "^0.5.4",
     "react": "^15.4.1",
-    "react-bootstrap": "^0.30.7",
+    "react-addons-css-transition-group": "^15.4.1",
+    "react-addons-transition-group": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-redux": "^4.4.6",
     "react-router": "^3.0.0",
+    "reactstrap": "^3.9.4",
     "redux": "^3.6.0",
     "reselect": "^2.5.4"
   },
@@ -46,7 +47,6 @@
     "eslint-plugin-react": "^6.8.0",
     "pre-commit": "^1.2.0",
     "redux-devtools": "^3.3.1",
-    "staged-files": "^0.1.2",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   }

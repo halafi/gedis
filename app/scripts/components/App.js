@@ -1,5 +1,5 @@
 import React from "react"
-import { Button } from "react-bootstrap"
+import { Container, Button, Row, Col } from "reactstrap"
 import { connect } from "react-redux"
 
 import AppNavbar from "./AppNavbar.js"
@@ -19,12 +19,14 @@ class App extends React.Component {
 		const { game } = this.props
 
 		return (
-			<div>
+			<Container>
 				<AppNavbar game={game} />
-				<div className="container">
-					<Button bsStyle="primary" onClick={this.handleClick}>Action</Button>
-				</div>
-			</div>
+				<Row>
+					<Col xs="12">
+						<Button bsStyle="primary" onClick={this.handleClick}>Bake</Button>
+					</Col>
+				</Row>
+			</Container>
 		)
 	}
 }
