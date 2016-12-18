@@ -1,5 +1,5 @@
 import React from "react"
-import { Container, Button, Row, Col, InputGroup, Input, InputGroupAddon } from "reactstrap"
+import { Container, Button, Row, Col, InputGroup, Input, InputGroupAddon, ListGroup, ListGroupItem } from "reactstrap"
 import { connect } from "react-redux"
 import reactMixin from "react-mixin"
 import ReactFireMixin from "reactfire"
@@ -9,59 +9,71 @@ import AppNavbar from "./AppNavbar.js"
 import { incrementCredits } from "../actions/GameActions"
 import { gameSelector } from "../stores/selectors/gameSelector"
 
-// Initialize Firebase
-const firebaseConf = {
-	apiKey: "AIzaSyDcvzEJoJb1w_qJcC_fEO3Xa7e_HNCreD8",
-	authDomain: "dopamine-simulator.firebaseapp.com",
-	databaseURL: "https://dopamine-simulator.firebaseio.com",
-	storageBucket: "dopamine-simulator.appspot.com",
-	messagingSenderId: "797610196288",
-}
-firebase.initializeApp(firebaseConf)
-
 class App extends React.Component {
 	constructor(props) {
-
 		super(props)
-		this.handleClick = this.handleClick.bind(this)
-		this.componentWillMount = this.componentWillMount.bind(this)
-		console.log(this)
 		this.state = {
 			text: "fap",
+			items: [],
 		}
+		this.handleChange = this.handleChange.bind(this)
+		this.handleSubmit = this.handleSubmit.bind(this)
+		this.componentWillMount = this.componentWillMount.bind(this)
 	}
 
-	componentWillMount() { // run once before rednering
-		const ref = firebase.database().ref("items")
-		this.bindAsArray(ref, "items")
-		console.log(this.state)
+	componentWillMount() {
+		this.firebaseRef = firebase.database().ref("items") //  reference to the items node at the root of the database
+		const items = []
+		this.firebaseRef.on("child_added", (dataSnapshot) => { // run every time a node is added under the items node
+			items.push(dataSnapshot.val())
+			this.setState({
+				items,
+			})
+		})
+		firebase.auth().onAuthStateChanged((user) => {
+			if (user) {
+				console.log("User is signed in.")
+				console.log(user.email)
+			} else {
+				console.log("No user is signed in.")
+			}
+		})
+	}
+
+	handleChange(e) {
+		this.setState({ text: e.target.value })
 	}
 
 	handleSubmit(e) {
+		// this.props.dispatch(incrementCredits(10))
 		e.preventDefault()
-		this.firebaseRefs.items.push({
+		this.firebaseRef.push({
 			text: this.state.text,
 		})
-		this.setState({ text: "" })
-	}
-
-	handleClick() {
-		this.props.dispatch(incrementCredits(10))
+		this.setState({
+			text: "",
+		})
 	}
 
 	render() {
-		const { game } = this.props
+		// const { game } = this.props
+		const { items } = this.state
 
 		return (
 			<Container>
-				<AppNavbar game={game} />
+				<AppNavbar />
 				<Row>
 					<Col xs="12">
 						<InputGroup>
 							<InputGroupAddon>@</InputGroupAddon>
-							<Input placeholder="text" value={this.state.text} />
+							<Input placeholder="text" value={this.state.text} onChange={this.handleChange} />
 						</InputGroup>
 						<Button color="primary" onClick={this.handleSubmit}>Submit</Button>
+						<ListGroup>
+							{items.map((item, i) => (
+								<ListGroupItem key={i}>{item.text}</ListGroupItem>
+							))}
+						</ListGroup>
 					</Col>
 				</Row>
 			</Container>
@@ -69,12 +81,12 @@ class App extends React.Component {
 	}
 }
 
+reactMixin.onClass(App, ReactFireMixin)
+
 App.propTypes = {
 	game: React.PropTypes.object,
 	dispatch: React.PropTypes.func,
 }
-
-reactMixin(App.prototype, ReactFireMixin)
 
 export default connect((state) => {
 	return {
