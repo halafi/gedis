@@ -1,13 +1,12 @@
-export const incrementCredits = (amount = 1) => {
+export const loginUser = (user) => {
 	return {
-		type: "INCREMENT",
-		amount,
+		type: "LOGIN",
+		user,
 	}
 }
 
-export const decrementCredits = (amount = 1) => {
+export const logoutUser = () => {
 	return {
-		type: "DECREMENT",
-		amount,
+		type: "LOGOUT",
 	}
 }

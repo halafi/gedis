@@ -7,7 +7,7 @@ import immutable from "immutable"
 import installDevTools from "immutable-devtools"
 import firebase from "firebase"
 
-import App from "./components/App.js"
+import App from "./containers/App.js"
 import reducers from "./stores/reducers"
 
 // Initialize Firebase
