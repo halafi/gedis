@@ -17,6 +17,7 @@ class App extends React.Component {
 			messages: [],
 		}
 		this.handleLogin = this.handleLogin.bind(this)
+		this.handleRegistration = this.handleRegistration.bind(this)
 		this.handleLogout = this.handleLogout.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -35,9 +36,9 @@ class App extends React.Component {
 				console.log(this.props.user)
 			}
 		})
-		this.firebaseRef = firebase.database().ref("messages")
+		this.messagesRef = firebase.database().ref("messages")
 		const messages = []
-		this.firebaseRef.on("child_added", (dataSnapshot) => {
+		this.messagesRef.on("child_added", (dataSnapshot) => {
 			messages.push(dataSnapshot.val())
 			this.setState({
 				messages,
@@ -47,6 +48,24 @@ class App extends React.Component {
 
 	handleLogin(email, password) {
 		firebase.auth().signInWithEmailAndPassword(email, password)
+			.catch(error => (console.log(error.code, error.message)))
+	}
+
+	handleRegistration(email, password, userName) {
+		const { dispatch } = this.props
+
+		firebase.auth().createUserWithEmailAndPassword(email, password)
+			.then(() => {
+				const user = firebase.auth().currentUser
+				user.updateProfile({
+					displayName: userName,
+				}).then(() => {
+					console.log("user updated")
+					dispatch(UserActions.loginUser(user))
+				}, (error) => {
+					console.log(error)
+				})
+			})
 			.catch(error => (console.log(error.code, error.message)))
 	}
 
@@ -60,8 +79,8 @@ class App extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault()
-		this.firebaseRef.push({
-			user: this.props.user.email,
+		this.messagesRef.push({
+			user: this.props.user.displayName,
 			text: this.state.text,
 		})
 		this.setState({
@@ -75,12 +94,12 @@ class App extends React.Component {
 
 		return (
 			<Container>
-				<Navbar user={user} onLogout={this.handleLogout} onLogin={this.handleLogin} />
+				<Navbar user={user} onLogout={this.handleLogout} onLogin={this.handleLogin} onRegistration={this.handleRegistration} />
 				{user.uid &&
 					<Row style={{ "marginTop": "15px" }}>
 						<Col xs="12">
 							<InputGroup>
-								<InputGroupAddon>{user.email}</InputGroupAddon>
+								<InputGroupAddon>{user.displayName}</InputGroupAddon>
 								<Input placeholder="text" value={this.state.text} onChange={this.handleChange} />
 							</InputGroup>
 							<Button color="primary" onClick={this.handleSubmit}>Send</Button>

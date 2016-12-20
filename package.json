@@ -2,7 +2,7 @@
   "author": "Filip Halas",
   "description": "Dopamine Simulator",
   "main": "main.js",
-  "name": "dopasim",
+  "name": "speakmind",
   "private": true,
   "version": "1.0.0",
   "repository": {
@@ -19,6 +19,7 @@
   },
   "pre-commit": [],
   "dependencies": {
+    "classnames": "^2.2.5",
     "firebase": "^3.6.4",
     "immutable": "^3.8.1",
     "immutable-devtools": "0.0.7",

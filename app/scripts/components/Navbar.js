@@ -11,6 +11,7 @@ export default class Navbar extends React.Component {
 		}
 		this.toggleLoginModal = this.toggleLoginModal.bind(this)
 		this.handleLogin = this.handleLogin.bind(this)
+		this.handleRegistration = this.handleRegistration.bind(this)
 		this.handleLogout = this.handleLogout.bind(this)
 	}
 
@@ -25,6 +26,11 @@ export default class Navbar extends React.Component {
 		this.toggleLoginModal()
 	}
 
+	handleRegistration(email, password, userName) {
+		this.props.onRegistration(email, password, userName)
+		this.toggleLoginModal()
+	}
+
 	handleLogout(e) {
 		e.preventDefault()
 		this.props.onLogout()
@@ -35,7 +41,7 @@ export default class Navbar extends React.Component {
 
 		return (
 			<BsNavbar color="faded" light>
-				<NavbarBrand href="/">Dopasim</NavbarBrand>
+				<NavbarBrand>SpeakMind</NavbarBrand>
 
 				<Nav className="float-xs-right" navbar>
 					<NavItem>
@@ -48,7 +54,7 @@ export default class Navbar extends React.Component {
 					</NavItem>
 				</Nav>
 
-				<LoginModal open={this.state.loginModal} toggle={this.toggleLoginModal} onLogin={this.handleLogin} />
+				<LoginModal open={this.state.loginModal} toggle={this.toggleLoginModal} onLogin={this.handleLogin} onRegister={this.handleRegistration} />
 			</BsNavbar>
 		)
 	}
@@ -57,5 +63,6 @@ export default class Navbar extends React.Component {
 Navbar.propTypes = {
 	user: React.PropTypes.object,
 	onLogin: React.PropTypes.func,
+	onRegistration: React.PropTypes.func,
 	onLogout: React.PropTypes.func,
 }
