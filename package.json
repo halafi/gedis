@@ -10,7 +10,8 @@
     "url": "https://github.com/halafi/speakmind.git"
   },
   "scripts": {
-    "build": "./node_modules/.bin/babel src -d lib",
+    "build": "webpack --config webpack.config.js",
+    "deploy": "webpack --config webpack.config.js && firebase deploy",
     "start": "webpack-dev-server",
     "eslint": "eslint '**/*.js'",
     "eslint:fix": "eslint '**/*.js' --fix",

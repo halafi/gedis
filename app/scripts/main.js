@@ -12,11 +12,11 @@ import reducers from "./stores/reducers"
 
 // Initialize Firebase
 const firebaseConf = {
-	apiKey: "AIzaSyDcvzEJoJb1w_qJcC_fEO3Xa7e_HNCreD8",
-	authDomain: "dopamine-simulator.firebaseapp.com",
-	databaseURL: "https://dopamine-simulator.firebaseio.com",
-	storageBucket: "dopamine-simulator.appspot.com",
-	messagingSenderId: "797610196288",
+	apiKey: "AIzaSyAu-2VOFmnwWP30cGjzbr41Xm8eu4iGSeo",
+	authDomain: "speakmind-50ff8.firebaseapp.com",
+	databaseURL: "https://speakmind-50ff8.firebaseio.com",
+	storageBucket: "speakmind-50ff8.appspot.com",
+	messagingSenderId: "1081217280172",
 }
 firebase.initializeApp(firebaseConf)
 
