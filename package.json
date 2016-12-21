@@ -1,13 +1,13 @@
 {
   "author": "Filip Halas",
-  "description": "Dopamine Simulator",
+  "description": "Speakmind",
   "main": "main.js",
   "name": "speakmind",
   "private": true,
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/halafi/dopasim.git"
+    "url": "https://github.com/halafi/speakmind.git"
   },
   "scripts": {
     "build": "./node_modules/.bin/babel src -d lib",
