@@ -3,11 +3,23 @@ import { connect } from "react-redux"
 import reactMixin from "react-mixin"
 import ReactFireMixin from "reactfire"
 import firebase from "firebase"
-import { Container, Button, Row, Col, InputGroup, Input, InputGroupAddon, ListGroup, ListGroupItem } from "reactstrap"
+import {
+	Container,
+	Button,
+	Row,
+	Col,
+	InputGroup,
+	Input,
+	InputGroupAddon,
+	InputGroupButton,
+	Card,
+	CardBlock,
+} from "reactstrap"
 
 import Navbar from "../components/Navbar.js"
 import * as UserActions from "../actions/UserActions"
 import { userSelector } from "../stores/selectors/userSelector"
+import Message from "../components/Message"
 
 class App extends React.Component {
 	constructor(props) {
@@ -21,7 +33,9 @@ class App extends React.Component {
 		this.handleLogout = this.handleLogout.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
+		this.handleKeyPress = this.handleKeyPress.bind(this)
 		this.componentWillMount = this.componentWillMount.bind(this)
+		this.clearMessages = this.clearMessages.bind(this)
 	}
 
 	componentWillMount() {
@@ -78,13 +92,43 @@ class App extends React.Component {
 	}
 
 	handleSubmit(e) {
-		e.preventDefault()
-		this.messagesRef.push({
-			user: this.props.user.displayName,
-			text: this.state.text,
-		})
-		this.setState({
-			text: "",
+		if (e) e.preventDefault()
+		if (this.state.text.length > 0) {
+			if (this.state.text === "/clear") {
+				this.clearMessages()
+			} else {
+				this.messagesRef.push({
+					user: this.props.user.displayName,
+					text: this.state.text,
+				})
+				this.setState({
+					text: "",
+				})
+			}
+		}
+	}
+
+	handleKeyPress(target) {
+		if (target.charCode === 13) {
+			this.handleSubmit(null)
+		}
+	}
+
+	clearMessages() {
+		this.messagesRef.remove().then(() => {
+			console.log("Remove succeeded.")
+			this.setState({
+				text: "",
+				messages: [],
+			})
+			this.messagesRef = firebase.database().ref("messages")
+			const messages = [] // do not like this duplicate code
+			this.messagesRef.on("child_added", (dataSnapshot) => {
+				messages.push(dataSnapshot.val())
+				this.setState({
+					messages,
+				})
+			})
 		})
 	}
 
@@ -92,27 +136,41 @@ class App extends React.Component {
 		const { user } = this.props
 		const { messages } = this.state
 
+		const shownMessages = messages.map((item, i) => {
+			if (i > messages.length - 25) {
+				return (
+					<Message key={i} userName={item.user} value={item.text} />
+				)
+			}
+			return null
+		})
+
 		return (
 			<Container>
 				<Navbar user={user} onLogout={this.handleLogout} onLogin={this.handleLogin} onRegistration={this.handleRegistration} />
 				{user.uid &&
 					<Row style={{ "marginTop": "15px" }}>
 						<Col xs="12">
-							<InputGroup>
-								<InputGroupAddon>{user.displayName}</InputGroupAddon>
-								<Input placeholder="text" value={this.state.text} onChange={this.handleChange} />
+							<InputGroup size="md">
+								<InputGroupAddon>{user.displayName}:</InputGroupAddon>
+								<Input placeholder="text" value={this.state.text} onChange={this.handleChange} onKeyPress={this.handleKeyPress}/>
+								<InputGroupButton><Button onClick={this.handleSubmit}>Send</Button></InputGroupButton>
 							</InputGroup>
-							<Button color="primary" onClick={this.handleSubmit}>Send</Button>
 						</Col>
 					</Row>
 				}
 				<Row style={{ "marginTop": "15px" }}>
 					<Col xs="12">
-						<ListGroup>
-							{messages.map((item, i) => (
-								<ListGroupItem key={i}><small>{item.user}: {item.text}</small></ListGroupItem>
-							))}
-						</ListGroup>
+						<Card>
+							<CardBlock>
+								{shownMessages}
+							</CardBlock>
+						</Card>
+						{/*<Card>*/}
+							{/*<CardBlock>*/}
+								{/*<small>User: { JSON.stringify(user) }</small>*/} {/*TODO environment variables for webpack*/}
+							{/*</CardBlock>*/}
+						{/*</Card>*/}
 					</Col>
 				</Row>
 			</Container>

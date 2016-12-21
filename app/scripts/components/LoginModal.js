@@ -56,12 +56,12 @@ class LoginModal extends React.Component {
 		if (this.state.email.length < 6) {
 			return
 		}
-		if (this.state.displayName.length < 4) {
-			return
-		}
 		if (this.state.activeTab === "1") {
 			this.props.onLogin(this.state.email, this.state.password)
 		} else if (this.state.activeTab === "2") {
+			if (this.state.displayName.length < 4) {
+				return
+			}
 			this.props.onRegister(this.state.email, this.state.password, this.state.displayName)
 		}
 	}
@@ -77,22 +77,22 @@ class LoginModal extends React.Component {
 		return (
 			<Modal isOpen={open} toggle={toggle}>
 				<ModalHeader toggle={toggle}>Sign In</ModalHeader>
-				<Nav tabs style={{ "marginTop": "15px" }}>
-					<NavItem style={{"cursor": "pointer"}}>
-						<NavLink className={firstTabClasses} onClick={() => { this.toggle("1") }} >
-							Existing User
-						</NavLink>
-					</NavItem>
-					<NavItem style={{"cursor": "pointer"}}>
-						<NavLink className={secondTabClasses} onClick={() => { this.toggle("2") }} >
-							New User
-						</NavLink>
-					</NavItem>
-				</Nav>
 				<Form>
-					<TabContent activeTab={this.state.activeTab}>
-						<TabPane tabId="1">
-							<ModalBody>
+					<Nav tabs style={{ "marginTop": "15px" }}>
+						<NavItem style={{ "cursor": "pointer" }}>
+							<NavLink className={firstTabClasses} onClick={() => { this.toggle("1") }} >
+								Existing User
+							</NavLink>
+						</NavItem>
+						<NavItem style={{ "cursor": "pointer" }}>
+							<NavLink className={secondTabClasses} onClick={() => { this.toggle("2") }} >
+								New User
+							</NavLink>
+						</NavItem>
+					</Nav>
+					<ModalBody>
+						<TabContent activeTab={this.state.activeTab}>
+							<TabPane tabId="1">
 								<FormGroup>
 									<Label for="userEmail">Email</Label>
 									<Input
@@ -109,10 +109,8 @@ class LoginModal extends React.Component {
 										onChange={(e) => { this.handleChange("password", e) }}
 									/>
 								</FormGroup>
-							</ModalBody>
-						</TabPane>
-						<TabPane tabId="2">
-							<ModalBody>
+							</TabPane>
+							<TabPane tabId="2">
 								<FormGroup>
 									<Label for="displayName">Display Name</Label>
 									<Input
@@ -137,9 +135,9 @@ class LoginModal extends React.Component {
 										onChange={(e) => { this.handleChange("password", e) }}
 									/>
 								</FormGroup>
-							</ModalBody>
-						</TabPane>
-					</TabContent>
+							</TabPane>
+						</TabContent>
+					</ModalBody>
 					<ModalFooter>
 						<Button onClick={this.handleSubmit} color="primary">{ submitBtnLabel }</Button>
 						{" "}
