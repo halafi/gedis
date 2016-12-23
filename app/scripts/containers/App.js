@@ -3,6 +3,7 @@ import { connect } from "react-redux"
 import reactMixin from "react-mixin"
 import ReactFireMixin from "reactfire"
 import firebase from "firebase"
+import moment from "moment"
 import {
 	Container,
 	Button,
@@ -10,7 +11,6 @@ import {
 	Col,
 	InputGroup,
 	Input,
-	InputGroupAddon,
 	InputGroupButton,
 	Card,
 	CardBlock,
@@ -28,6 +28,7 @@ class App extends React.Component {
 			text: "",
 			messages: [],
 		}
+		this.initFirebase = this.initFirebase.bind(this)
 		this.handleLogin = this.handleLogin.bind(this)
 		this.handleRegistration = this.handleRegistration.bind(this)
 		this.handleLogout = this.handleLogout.bind(this)
@@ -38,18 +39,7 @@ class App extends React.Component {
 		this.clearMessages = this.clearMessages.bind(this)
 	}
 
-	componentWillMount() {
-		firebase.auth().onAuthStateChanged((user) => {
-			if (user) {
-				console.log("User is signed in.")
-				this.props.dispatch(UserActions.loginUser(user)) // user is signed in
-				console.log(this.props.user)
-			} else {
-				console.log("No user is signed in.")
-				this.props.dispatch(UserActions.logoutUser()) // no user is signed in
-				console.log(this.props.user)
-			}
-		})
+	initFirebase() {
 		this.messagesRef = firebase.database().ref("messages")
 		const messages = []
 		this.messagesRef.on("child_added", (dataSnapshot) => {
@@ -60,9 +50,22 @@ class App extends React.Component {
 		})
 	}
 
+	componentWillMount() {
+		firebase.auth().onAuthStateChanged((user) => {
+			if (user) {
+				this.props.dispatch(UserActions.loginUser(user)) // user is signed in
+				console.info(this.props.user, "User is signed in.")
+			} else {
+				this.props.dispatch(UserActions.logoutUser()) // no user is signed in
+				console.info("No user is signed in.")
+			}
+		})
+		this.initFirebase()
+	}
+
 	handleLogin(email, password) {
 		firebase.auth().signInWithEmailAndPassword(email, password)
-			.catch(error => (console.log(error.code, error.message)))
+			.catch(error => (console.error(error.code, error.message)))
 	}
 
 	handleRegistration(email, password, userName) {
@@ -74,17 +77,16 @@ class App extends React.Component {
 				user.updateProfile({
 					displayName: userName,
 				}).then(() => {
-					console.log("user updated")
 					dispatch(UserActions.loginUser(user))
 				}, (error) => {
-					console.log(error)
+					console.error(error)
 				})
 			})
-			.catch(error => (console.log(error.code, error.message)))
+			.catch(error => (console.error(error.code, error.message)))
 	}
 
 	handleLogout() {
-		firebase.auth().signOut().then(() => console.log("logout success"))
+		firebase.auth().signOut()
 	}
 
 	handleChange(e) {
@@ -92,14 +94,43 @@ class App extends React.Component {
 	}
 
 	handleSubmit(e) {
+		const { user } = this.props
+		const { text, messages } = this.state
+
 		if (e) e.preventDefault()
-		if (this.state.text.length > 0) {
-			if (this.state.text === "/clear") {
-				this.clearMessages()
+		if (text.length > 0) {
+			if (text[0] === "/") {
+				if (text === "/clear") {
+					this.clearMessages()
+				} else if (text === "/help") {
+					messages.push({
+						user: "",
+						text: "Commands begin with /. You can use /clear to delete history of all messages.",
+						time: "",
+					})
+					this.setState({
+						text: "",
+						messages,
+					})
+				} else {
+					messages.push({
+						user: "",
+						text: `${text} is not a valid command. To see a list of available commands use /help.`,
+						time: "",
+					})
+					this.setState({
+						text: "",
+						messages,
+					})
+				}
 			} else {
+				// if (messages[messages.length - 1].user === user.displayName) {
+					// TODO merge messages
+				// }
 				this.messagesRef.push({
-					user: this.props.user.displayName,
-					text: this.state.text,
+					user: user.displayName,
+					text,
+					time: moment().format("HH:mm"),
 				})
 				this.setState({
 					text: "",
@@ -121,14 +152,7 @@ class App extends React.Component {
 				text: "",
 				messages: [],
 			})
-			this.messagesRef = firebase.database().ref("messages")
-			const messages = [] // do not like this duplicate code
-			this.messagesRef.on("child_added", (dataSnapshot) => {
-				messages.push(dataSnapshot.val())
-				this.setState({
-					messages,
-				})
-			})
+			this.initFirebase()
 		})
 	}
 
@@ -137,9 +161,9 @@ class App extends React.Component {
 		const { messages } = this.state
 
 		const shownMessages = messages.map((item, i) => {
-			if (i > messages.length - 25) {
+			if (i > messages.length - 11) {
 				return (
-					<Message key={i} userName={item.user} value={item.text} />
+					<Message key={i} userName={item.user} value={item.text} time={item.time} />
 				)
 			}
 			return null
@@ -151,28 +175,24 @@ class App extends React.Component {
 				{user.uid &&
 					<Row style={{ "marginTop": "15px" }}>
 						<Col xs="12">
+							<Card style={{ "height": "520px" }}>
+								<CardBlock>
+									{shownMessages}
+								</CardBlock>
+							</Card>
+							{/*<Card>*/}
+							{/*<CardBlock>*/}
+							{/*<small>User: { JSON.stringify(user) }</small>*/} {/*TODO environment variables for webpack*/}
+							{/*</CardBlock>*/}
+							{/*</Card>*/}
 							<InputGroup size="md">
-								<InputGroupAddon>{user.displayName}:</InputGroupAddon>
-								<Input placeholder="text" value={this.state.text} onChange={this.handleChange} onKeyPress={this.handleKeyPress}/>
+								<InputGroupButton><Button disabled onClick={this.handleSubmit}>+</Button></InputGroupButton>
+								<Input placeholder="Message" value={this.state.text} onChange={this.handleChange} onKeyPress={this.handleKeyPress} />
 								<InputGroupButton><Button onClick={this.handleSubmit}>Send</Button></InputGroupButton>
 							</InputGroup>
 						</Col>
 					</Row>
 				}
-				<Row style={{ "marginTop": "15px" }}>
-					<Col xs="12">
-						<Card>
-							<CardBlock>
-								{shownMessages}
-							</CardBlock>
-						</Card>
-						{/*<Card>*/}
-							{/*<CardBlock>*/}
-								{/*<small>User: { JSON.stringify(user) }</small>*/} {/*TODO environment variables for webpack*/}
-							{/*</CardBlock>*/}
-						{/*</Card>*/}
-					</Col>
-				</Row>
 			</Container>
 		)
 	}

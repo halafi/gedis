@@ -49,12 +49,17 @@ export default class Navbar extends React.Component {
 							<NavLink href="#" onClick={this.toggleLoginModal}>Sign in</NavLink>
 						}
 						{user.uid &&
-							<NavLink href="#" onClick={this.handleLogout}>Sign out</NavLink>
+							<NavLink href="#" onClick={this.handleLogout}>Sign out ({user.displayName})</NavLink>
 						}
 					</NavItem>
 				</Nav>
 
-				<LoginModal open={this.state.loginModal} toggle={this.toggleLoginModal} onLogin={this.handleLogin} onRegister={this.handleRegistration} />
+				<LoginModal
+					open={this.state.loginModal}
+					toggle={this.toggleLoginModal}
+					onLogin={this.handleLogin}
+					onRegister={this.handleRegistration}
+				/>
 			</BsNavbar>
 		)
 	}
