@@ -19,7 +19,7 @@ import {
 import Gathering from "../../../lib/gathering"
 import Navbar from "../components/Navbar.js"
 import * as UserActions from "../actions/UserActions"
-import { userSelector } from "../stores/selectors/userSelector"
+import { userSelector } from "../selectors/userSelector"
 import Message from "../components/Message"
 
 class App extends React.Component {
@@ -63,7 +63,7 @@ class App extends React.Component {
 			if (user) {
 				this.onlineUsers.join(user.uid, user.displayName)
 				this.props.dispatch(UserActions.loginUser(user)) // user is signed in
-				console.info(this.props.user, "User is signed in.")
+				console.info("User is signed in.", this.props.user)
 			} else {
 				this.onlineUsers.leave()
 				this.props.dispatch(UserActions.logoutUser()) // no user is signed in
@@ -178,7 +178,7 @@ class App extends React.Component {
 			}
 			return null
 		})
-		const onlineUsersCount = Object.keys(onlineUsers).length
+		const onlineUsersCount = onlineUsers ? Object.keys(onlineUsers).length: 0
 		const onlineUsersEl = _.map(onlineUsers, (u, i) => {
 			return (
 				<div key={i}>
@@ -211,11 +211,11 @@ class App extends React.Component {
 						}
 					</Col>
 					<Col xs="12">
-						{/*<Card>*/}
-							{/*<CardBlock>*/}
-								{/*<small>User: { JSON.stringify(user) }</small>*/}
-							{/*</CardBlock>*/}
-						{/*</Card>*/}
+						<Card>
+							<CardBlock>
+								<small>User: { JSON.stringify(user) }</small>
+							</CardBlock>
+						</Card>
 						<InputGroup size="md">
 							<InputGroupButton><Button disabled onClick={this.handleSubmit}>+</Button></InputGroupButton>
 							<Input placeholder="Message" value={this.state.text} onChange={this.handleChange} onKeyPress={this.handleKeyPress} />

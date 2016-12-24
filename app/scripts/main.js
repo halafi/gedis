@@ -8,9 +8,8 @@ import installDevTools from "immutable-devtools"
 import firebase from "firebase"
 
 import App from "./containers/App.js"
-import reducers from "./stores/reducers"
+import reducers from "./reducers"
 
-// Initialize Firebase
 const firebaseConf = {
 	apiKey: "AIzaSyAu-2VOFmnwWP30cGjzbr41Xm8eu4iGSeo",
 	authDomain: "speakmind-50ff8.firebaseapp.com",
@@ -20,10 +19,8 @@ const firebaseConf = {
 }
 firebase.initializeApp(firebaseConf)
 
-// Install immutable chrome dev tools
 installDevTools(immutable)
 
-// Create redux store
 const store = createStore(reducers)
 
 ReactDOM.render((
