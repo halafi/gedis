@@ -22,6 +22,8 @@ import * as UserActions from "../actions/UserActions"
 import { userSelector } from "../selectors/userSelector"
 import Message from "../components/Message"
 
+require("./App.scss")
+
 class App extends React.Component {
 	constructor(props) {
 		super(props)
@@ -41,6 +43,21 @@ class App extends React.Component {
 		this.clearMessages = this.clearMessages.bind(this)
 	}
 
+	componentWillMount() {
+		firebase.auth().onAuthStateChanged((user) => {
+			if (user) {
+				this.onlineUsers.join(user.uid, user.displayName)
+				this.props.dispatch(UserActions.loginUser(user)) // user is signed in
+				console.info("User is signed in.", this.props.user)
+			} else {
+				this.onlineUsers.leave()
+				this.props.dispatch(UserActions.logoutUser()) // no user is signed in
+				console.info("No user is signed in.")
+			}
+		})
+		this.initFirebase()
+	}
+
 	initFirebase() {
 		this.messagesRef = firebase.database().ref("messages")
 		const messages = []
@@ -56,21 +73,6 @@ class App extends React.Component {
 				onlineUsers: users,
 			})
 		})
-	}
-
-	componentWillMount() {
-		firebase.auth().onAuthStateChanged((user) => {
-			if (user) {
-				this.onlineUsers.join(user.uid, user.displayName)
-				this.props.dispatch(UserActions.loginUser(user)) // user is signed in
-				console.info("User is signed in.", this.props.user)
-			} else {
-				this.onlineUsers.leave()
-				this.props.dispatch(UserActions.logoutUser()) // no user is signed in
-				console.info("No user is signed in.")
-			}
-		})
-		this.initFirebase()
 	}
 
 	handleLogin(email, password) {
@@ -178,7 +180,7 @@ class App extends React.Component {
 			}
 			return null
 		})
-		const onlineUsersCount = onlineUsers ? Object.keys(onlineUsers).length: 0
+		const onlineUsersCount = onlineUsers ? Object.keys(onlineUsers).length : 0
 		const onlineUsersEl = _.map(onlineUsers, (u, i) => {
 			return (
 				<div key={i}>

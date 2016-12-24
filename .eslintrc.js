@@ -54,7 +54,7 @@ module.exports = {
 		"react/jsx-indent-props": ["error", "tab"],
 		"react/jsx-filename-extension": [1, { "extensions": [".js"] }], // file ext. that may contain JSX
 		"react/prop-types": ["warn"],
-		"react/jsx-space-before-closing": ["warn"],
+		"react/jsx-space-before-closing": ["off"],
 		"react/sort-comp": ["warn"],
 		"react/no-find-dom-node": ["warn"],
 		"react/no-string-refs": ["warn"],
