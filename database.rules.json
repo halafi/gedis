@@ -1,6 +1,12 @@
 {
   "rules": {
-    ".read": "true",
-    ".write": "auth != null"
+    "messages": {
+      ".read": "true",
+      ".write": "auth != null"
+    },
+    "gatherings": {
+      ".read": "true",
+      ".write": "true"
+    }
   }
 }

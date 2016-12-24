@@ -4,6 +4,7 @@ import reactMixin from "react-mixin"
 import ReactFireMixin from "reactfire"
 import firebase from "firebase"
 import moment from "moment"
+import _ from "lodash"
 import {
 	Container,
 	Button,
@@ -15,7 +16,7 @@ import {
 	Card,
 	CardBlock,
 } from "reactstrap"
-
+import Gathering from "../../../lib/gathering"
 import Navbar from "../components/Navbar.js"
 import * as UserActions from "../actions/UserActions"
 import { userSelector } from "../stores/selectors/userSelector"
@@ -27,6 +28,7 @@ class App extends React.Component {
 		this.state = {
 			text: "",
 			messages: [],
+			onlineUsers: [],
 		}
 		this.initFirebase = this.initFirebase.bind(this)
 		this.handleLogin = this.handleLogin.bind(this)
@@ -48,14 +50,22 @@ class App extends React.Component {
 				messages,
 			})
 		})
+		this.onlineUsers = new Gathering(firebase.database())
+		this.onlineUsers.onUpdated((count, users) => { // called every time user list updated
+			this.setState({
+				onlineUsers: users,
+			})
+		})
 	}
 
 	componentWillMount() {
 		firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
+				this.onlineUsers.join(user.uid, user.displayName)
 				this.props.dispatch(UserActions.loginUser(user)) // user is signed in
 				console.info(this.props.user, "User is signed in.")
 			} else {
+				this.onlineUsers.leave()
 				this.props.dispatch(UserActions.logoutUser()) // no user is signed in
 				console.info("No user is signed in.")
 			}
@@ -158,7 +168,7 @@ class App extends React.Component {
 
 	render() {
 		const { user } = this.props
-		const { messages } = this.state
+		const { messages, onlineUsers } = this.state
 
 		const shownMessages = messages.map((item, i) => {
 			if (i > messages.length - 11) {
@@ -168,31 +178,51 @@ class App extends React.Component {
 			}
 			return null
 		})
+		const onlineUsersCount = Object.keys(onlineUsers).length
+		const onlineUsersEl = _.map(onlineUsers, (u, i) => {
+			return (
+				<div key={i}>
+					{u}
+				</div>
+			)
+		})
 
 		return (
 			<Container>
 				<Navbar user={user} onLogout={this.handleLogout} onLogin={this.handleLogin} onRegistration={this.handleRegistration} />
-				{user.uid &&
-					<Row style={{ "marginTop": "15px" }}>
-						<Col xs="12">
+				<Row style={{ "marginTop": "15px" }}>
+					<Col xs="2">
+						<Card style={{ "height": "520px" }}>
+							<CardBlock>
+								<small>
+									<strong>Online</strong><br/>
+									{onlineUsersEl}
+								</small>
+							</CardBlock>
+						</Card>
+					</Col>
+					<Col xs="10">
+						{user.uid &&
 							<Card style={{ "height": "520px" }}>
 								<CardBlock>
 									{shownMessages}
 								</CardBlock>
 							</Card>
-							{/*<Card>*/}
+						}
+					</Col>
+					<Col xs="12">
+						{/*<Card>*/}
 							{/*<CardBlock>*/}
-							{/*<small>User: { JSON.stringify(user) }</small>*/} {/*TODO environment variables for webpack*/}
+								{/*<small>User: { JSON.stringify(user) }</small>*/}
 							{/*</CardBlock>*/}
-							{/*</Card>*/}
-							<InputGroup size="md">
-								<InputGroupButton><Button disabled onClick={this.handleSubmit}>+</Button></InputGroupButton>
-								<Input placeholder="Message" value={this.state.text} onChange={this.handleChange} onKeyPress={this.handleKeyPress} />
-								<InputGroupButton><Button onClick={this.handleSubmit}>Send</Button></InputGroupButton>
-							</InputGroup>
-						</Col>
-					</Row>
-				}
+						{/*</Card>*/}
+						<InputGroup size="md">
+							<InputGroupButton><Button disabled onClick={this.handleSubmit}>+</Button></InputGroupButton>
+							<Input placeholder="Message" value={this.state.text} onChange={this.handleChange} onKeyPress={this.handleKeyPress} />
+							<InputGroupButton><Button onClick={this.handleSubmit}>Send</Button></InputGroupButton>
+						</InputGroup>
+					</Col>
+				</Row>
 			</Container>
 		)
 	}
