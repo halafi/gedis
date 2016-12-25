@@ -1,14 +1,23 @@
 import React from "react"
-import { } from "reactstrap"
 
 const Message = ({ value, userName, time }) => {
+	const isCommand = userName === "command"
+
 	return (
 		<div>
-			<small>
-				{(userName !== "" && time !== "") &&
-					<span><strong>{userName}</strong> {time}<br/></span>
+			<small className={isCommand ? "_light" : ""}>
+				{isCommand &&
+					<span>
+						<span className="_strong"> Only visible to you</span>&nbsp;&nbsp;<span className="_veryLight _small">{time}</span><br/>
+						{value}
+					</span>
 				}
-				{value}
+				{!isCommand &&
+					<span>
+						<span className="_strong">{userName}</span>&nbsp;&nbsp;<span className="_veryLight _small">{time}</span><br/>
+						<span className="_lighter">{value}</span>
+					</span>
+				}
 			</small>
 		</div>
 	)
@@ -19,5 +28,9 @@ Message.propTypes = {
 	userName: React.PropTypes.string.isRequired,
 	time: React.PropTypes.string.isRequired,
 }
+
+// Message.defaultProps = {
+// 	html: false,
+// }
 
 export default Message

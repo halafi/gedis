@@ -7,7 +7,7 @@ import configureStore from "./store/configureStore"
 import configureFirebase from "./firebase/configureFirebase"
 import Root from "./containers/Root"
 
-require("./main.scss")
+require("./../styles/main.scss")
 
 installDevTools(immutable)
 configureFirebase()

@@ -1,4 +1,5 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import { connect } from "react-redux"
 import reactMixin from "react-mixin"
 import ReactFireMixin from "reactfire"
@@ -51,6 +52,24 @@ class App extends React.Component {
 			}
 		})
 		this.initFirebase()
+	}
+
+	// componentDidMount() {
+	// 	this.handleResize()
+	//
+	// 	// Scroll to the bottom on initialization
+	// 	const len = this.props.messages.length - 1
+	// 	const node = ReactDOM.findDOMNode(this['_div' + len])
+	// 	if (node) {
+	// 		node.scrollIntoView()
+	// 	}
+	// }
+
+	componentDidUpdate() {
+		// Scroll as new elements come along
+		console.log(this.refs)
+		console.log(this.chat)
+		// this._chatDiv.scrollTop = 0
 	}
 
 	initFirebase() {
@@ -115,9 +134,9 @@ class App extends React.Component {
 					this.clearMessages()
 				} else if (text === "/help") {
 					messages.push({
-						user: "",
+						user: "command",
 						text: "Commands begin with /. You can use /clear to delete history of all messages.",
-						time: "",
+						time: moment().format("HH:mm"),
 					})
 					this.setState({
 						text: "",
@@ -125,9 +144,9 @@ class App extends React.Component {
 					})
 				} else {
 					messages.push({
-						user: "",
+						user: "command",
 						text: `${text} is not a valid command. To see a list of available commands use /help.`,
-						time: "",
+						time: moment().format("HH:mm"),
 					})
 					this.setState({
 						text: "",
@@ -171,14 +190,14 @@ class App extends React.Component {
 		const { user } = this.props
 		const { messages, onlineUsers } = this.state
 
-		const shownMessages = messages.map((item, i) => {
-			if (i > messages.length - 11) {
-				return (
-					<Message key={i} userName={item.user} value={item.text} time={item.time} />
-				)
-			}
-			return null
-		})
+		const shownMessages = messages.map((item, i) => (
+			<Message
+				key={i}
+				userName={item.user}
+				value={item.text}
+				time={item.time}
+			/>
+		))
 		const onlineUsersCount = onlineUsers ? Object.keys(onlineUsers).length : 0
 		const onlineUsersEl = _.map(onlineUsers, (u, i) => {
 			return (
@@ -191,10 +210,10 @@ class App extends React.Component {
 		return (
 			<Container>
 				<Navbar user={user} onLogout={this.handleLogout} onLogin={this.handleLogin} onRegistration={this.handleRegistration} />
-				<Row style={{ "marginTop": "15px" }}>
+				<Row>
 					<Col xs="2">
-						<Card style={{ "height": "520px" }}>
-							<CardBlock>
+						<Card>
+							<CardBlock className="chat">
 								<small>
 									<strong>Online</strong><br/>
 									{onlineUsersEl}
@@ -204,18 +223,31 @@ class App extends React.Component {
 					</Col>
 					<Col xs="10">
 						{user.uid &&
-							<Card style={{ "height": "520px" }}>
-								<CardBlock>
-									{shownMessages}
-								</CardBlock>
-							</Card>
+							<div>
+								<Card>
+									<CardBlock className="chat" ref={(chat) => { this.chat = chat }} >
+										{shownMessages}
+									</CardBlock>
+								</Card>
+							</div>
 						}
 					</Col>
+				</Row>
+				<Row>
 					<Col xs="12">
 						<InputGroup size="md">
-							<InputGroupButton><Button disabled onClick={this.handleSubmit}>+</Button></InputGroupButton>
-							<Input placeholder="Message" value={this.state.text} onChange={this.handleChange} onKeyPress={this.handleKeyPress} />
-							<InputGroupButton><Button onClick={this.handleSubmit}>Send</Button></InputGroupButton>
+							<InputGroupButton>
+								<Button disabled onClick={this.handleSubmit}>+</Button>
+							</InputGroupButton>
+							<Input
+								placeholder="Message"
+								value={this.state.text}
+								onChange={this.handleChange}
+								onKeyPress={this.handleKeyPress}
+							/>
+							<InputGroupButton>
+								<Button onClick={this.handleSubmit}>Send</Button>
+							</InputGroupButton>
 						</InputGroup>
 					</Col>
 				</Row>

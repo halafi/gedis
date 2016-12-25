@@ -61,6 +61,7 @@ module.exports = {
 		"react/prefer-stateless-function": ["warn"],
 		"react/prefer-es6-class": ["warn"],
 		"react/forbid-prop-types": ["off"],
+		"react/no-unused-prop-types": ["warn"],
 		// JSX-ALLY
 		"jsx-a11y/img-has-alt": ["off"],
 		"jsx-a11y/href-no-hash": ["warn"],

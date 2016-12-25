@@ -1,0 +1,69 @@
+@import "../../node_modules/bootstrap/dist/css/bootstrap.css";
+
+$font-default: Roboto, sans-serif;
+$font-size-default: 12px;
+$font-size-small: 10px;
+$font-size-medium: 14px;
+$font-size-large: 16px;
+
+// some quick colors http://www.w3schools.com/colors/colors_picker.asp, TODO: learn design
+$color-white: #ffffff;
+$color-grey1: #f2f2f2;
+$color-grey2: #e6e6e6;
+$color-grey3: #d9d9d9;
+$color-grey4: #cccccc;
+$color-grey5: #bfbfbf;
+$color-grey6: #b3b3b3;
+$color-grey7: #a6a6a6;
+$color-grey8: #999999;
+$color-grey9: #8c8c8c;
+$color-grey10: #808080;
+
+$color-darkgrey1: #737373; // Note to self: very satanistic color
+$color-darkgrey2: #666666;
+$color-darkgrey3: #595959;
+$color-darkgrey4: #4d4d4d;
+$color-darkgrey5: #404040;
+$color-darkgrey6: #333333;
+$color-darkgrey7: #262626;
+$color-darkgrey8: #1a1a1a;
+$color-darkgrey9: #0d0d0d;
+
+$color-black: #000000;
+
+
+body {
+  font-family: $font-default;
+  font-weight: 400;
+  color: $color-darkgrey8;
+}
+
+._lighter {
+  color: $color-darkgrey5;
+}
+
+._light {
+  color: $color-darkgrey1;
+}
+
+._veryLight {
+  color: $color-grey8;
+}
+
+._strong {
+  font-size: $font-size-default + 1;
+  font-weight: 600;
+}
+
+._small {
+  font-size: $font-size-small;
+}
+
+.row {
+  margin-top: 15px;
+}
+
+.chat {
+  overflow: auto;
+  height: 60vh;
+}
