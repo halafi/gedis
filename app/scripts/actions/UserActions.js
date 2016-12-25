@@ -1,12 +1,14 @@
+import { LOGIN, LOGOUT } from "../constants/ActionTypes"
+
 export const loginUser = (user) => {
 	return {
-		type: "LOGIN",
+		type: LOGIN,
 		user,
 	}
 }
 
 export const logoutUser = () => {
 	return {
-		type: "LOGOUT",
+		type: LOGOUT,
 	}
 }

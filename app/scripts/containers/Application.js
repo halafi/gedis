@@ -22,8 +22,6 @@ import * as UserActions from "../actions/UserActions"
 import { userSelector } from "../selectors/userSelector"
 import Message from "../components/Message"
 
-require("./App.scss")
-
 class App extends React.Component {
 	constructor(props) {
 		super(props)
@@ -213,11 +211,6 @@ class App extends React.Component {
 						}
 					</Col>
 					<Col xs="12">
-						<Card>
-							<CardBlock>
-								<small>User: { JSON.stringify(user) }</small>
-							</CardBlock>
-						</Card>
 						<InputGroup size="md">
 							<InputGroupButton><Button disabled onClick={this.handleSubmit}>+</Button></InputGroupButton>
 							<Input placeholder="Message" value={this.state.text} onChange={this.handleChange} onKeyPress={this.handleKeyPress} />

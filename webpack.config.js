@@ -1,14 +1,17 @@
+const webpack = require("webpack") // eslint-disable-line
+
 module.exports = {
-	entry: "./app/scripts/main.js",
+	entry: "./app/scripts/index.js",
 	output: {
 		path: "./public",
-		filename: "app-bundle.js",
+		filename: "bundle.js",
 	},
 	devServer: {
 		inline: true,
 		contentBase: "./app",
 		port: 3000,
 	},
+	devtool: "source-map",
 	module: {
 		loaders: [
 			{

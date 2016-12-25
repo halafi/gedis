@@ -10,9 +10,9 @@
     "url": "https://github.com/halafi/speakmind.git"
   },
   "scripts": {
-    "build": "webpack",
-    "deploy": "webpack && firebase deploy",
-    "start": "webpack-dev-server --content-base public/",
+    "build": "webpack --content-base public/ --define process.env.NODE_ENV='\"development\"'",
+    "deploy": "webpack --define process.env.NODE_ENV='\"production\"' && firebase deploy",
+    "start": "webpack-dev-server --content-base public/ --define process.env.NODE_ENV='\"development\"'",
     "eslint": "eslint '**/*.js'",
     "eslint:fix": "eslint '**/*.js' --fix",
     "eslint:errors": "eslint '**/*.js' --quiet",
@@ -20,6 +20,7 @@
   },
   "pre-commit": [],
   "dependencies": {
+    "bootstrap": "^4.0.0-alpha.5",
     "classnames": "^2.2.5",
     "firebase": "^3.6.4",
     "immutable": "^3.8.1",
@@ -37,6 +38,7 @@
     "reactfire": "^1.0.0",
     "reactstrap": "^3.9.4",
     "redux": "^3.6.0",
+    "redux-thunk": "^2.1.0",
     "reselect": "^2.5.4"
   },
   "devDependencies": {
@@ -56,6 +58,8 @@
     "node-sass": "^4.1.1",
     "pre-commit": "^1.2.0",
     "redux-devtools": "^3.3.1",
+    "redux-devtools-dock-monitor": "^1.1.1",
+    "redux-devtools-log-monitor": "^1.1.1",
     "sass-loader": "^4.1.1",
     "staged-files": "^0.1.2",
     "style-loader": "^0.13.1",
