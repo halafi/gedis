@@ -3,10 +3,7 @@ import ReactFireMixin from "reactfire"
 import reactMixin from "react-mixin"
 import classnames from "classnames"
 import {
-	Form,
-	FormGroup,
 	Label,
-	Input,
 	Button,
 	Modal,
 	ModalHeader,
@@ -18,6 +15,12 @@ import {
 	TabPane,
 	TabContent,
 } from "reactstrap"
+import {
+	AvForm,
+	AvGroup,
+	AvInput,
+	AvFeedback,
+} from "availity-reactstrap-validation"
 
 
 class LoginModal extends React.Component {
@@ -28,9 +31,22 @@ class LoginModal extends React.Component {
 			displayName: "",
 			email: "",
 			password: "",
+			confirmPassword: "",
 		}
 		this.handleChange = this.handleChange.bind(this)
-		this.handleSubmit = this.handleSubmit.bind(this)
+		this.handleValidSubmit = this.handleValidSubmit.bind(this)
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.open && !this.props.open) {
+			this.setState({
+				activeTab: "1",
+				displayName: "",
+				email: "",
+				password: "",
+				confirmPassword: "",
+			})
+		}
 	}
 
 	toggle(tab) {
@@ -40,35 +56,26 @@ class LoginModal extends React.Component {
 				displayName: "",
 				email: "",
 				password: "",
+				confirmPassword: "",
 			})
 		}
 	}
 
-	handleChange(field, e) {
-		this.setState({ [field]: e.target.value })
+	handleChange(field, value) {
+		this.setState({ [field]: value })
 	}
 
-	handleSubmit(e) {
-		e.preventDefault()
-		if (this.state.password.length < 6) {
-			return
-		}
-		if (this.state.email.length < 6) {
-			return
-		}
+	handleValidSubmit(event, values) {
 		if (this.state.activeTab === "1") {
 			this.props.onLogin(this.state.email, this.state.password)
 		} else if (this.state.activeTab === "2") {
-			if (this.state.displayName.length < 4) {
-				return
-			}
 			this.props.onRegister(this.state.email, this.state.password, this.state.displayName)
 		}
 	}
 
 	render() {
 		const { open, toggle } = this.props
-		const { email, password, displayName, activeTab } = this.state
+		const { email, password, confirmPassword, displayName, activeTab } = this.state
 
 		const firstTabClasses = classnames({ active: activeTab === "1" })
 		const secondTabClasses = classnames({ active: activeTab === "2" })
@@ -77,7 +84,7 @@ class LoginModal extends React.Component {
 		return (
 			<Modal isOpen={open} toggle={toggle}>
 				<ModalHeader toggle={toggle}>Sign In</ModalHeader>
-				<Form>
+				<AvForm onValidSubmit={this.handleValidSubmit}>
 					<Nav tabs style={{ "marginTop": "15px" }}>
 						<NavItem style={{ "cursor": "pointer" }}>
 							<NavLink className={firstTabClasses} onClick={() => { this.toggle("1") }} >
@@ -91,59 +98,81 @@ class LoginModal extends React.Component {
 						</NavItem>
 					</Nav>
 					<ModalBody>
-						<TabContent activeTab={this.state.activeTab}>
+						<TabContent activeTab={activeTab}>
 							<TabPane tabId="1">
-								<FormGroup>
+								<AvGroup>
 									<Label for="userEmail">Email</Label>
-									<Input
+									<AvInput
 										id="userEmail" type="email" name="email" placeholder="Email"
 										value={email}
-										onChange={(e) => { this.handleChange("email", e) }}
+										onChange={(val) => { this.handleChange("email", val) }}
+										validate={{ email: true, required: true }}
 									/>
-								</FormGroup>
-								<FormGroup>
+									<AvFeedback>Invalid email</AvFeedback>
+								</AvGroup>
+								<AvGroup>
 									<Label for="userPassword">Password</Label>
-									<Input
+									<AvInput
 										id="userPassword" type="password" name="password" placeholder="Password"
 										value={password}
-										onChange={(e) => { this.handleChange("password", e) }}
+										onChange={(val) => { this.handleChange("password", val) }}
+										validate={{ minLength: { value: 6 }, required: true }}
 									/>
-								</FormGroup>
+									<AvFeedback>Password is too short</AvFeedback>
+								</AvGroup>
 							</TabPane>
 							<TabPane tabId="2">
-								<FormGroup>
+								<AvGroup>
 									<Label for="displayName">Display Name</Label>
-									<Input
+									<AvInput
 										id="displayName" type="text" name="displayName" placeholder="Name"
 										value={displayName}
 										onChange={(e) => { this.handleChange("displayName", e) }}
+										validate={activeTab === "2" ? { minLength: { value: 4 }, required: true } : {}}
 									/>
-								</FormGroup>
-								<FormGroup>
+									<AvFeedback>Display name is too short</AvFeedback>
+								</AvGroup>
+								<AvGroup>
 									<Label for="userEmail">Email</Label>
-									<Input
+									<AvInput
 										id="userEmail" type="email" name="email" placeholder="Email"
 										value={email}
 										onChange={(e) => { this.handleChange("email", e) }}
+										validate={{ email: true, required: true }}
 									/>
-								</FormGroup>
-								<FormGroup>
+									<AvFeedback>Invalid email</AvFeedback>
+								</AvGroup>
+								<AvGroup>
 									<Label for="userPassword">Password</Label>
-									<Input
+									<AvInput
 										id="userPassword" type="password" name="password" placeholder="Password"
 										value={password}
 										onChange={(e) => { this.handleChange("password", e) }}
+										validate={{ minLength: { value: 6 }, required: true }}
 									/>
-								</FormGroup>
+									<AvFeedback>Password is too short</AvFeedback>
+								</AvGroup>
+								<AvGroup>
+									<Label for="userPassword2">Confirm password</Label>
+									<AvInput
+										id="confirm_password" type="password" name="confirm_password" placeholder="Confirm password"
+										value={confirmPassword}
+										onChange={(e) => { this.handleChange("confirmPassword", e) }}
+										validate={activeTab === "2"
+											? { required: true, match: { value: "password" } }
+											: {}}
+									/>
+									<AvFeedback>Passwords must match</AvFeedback>
+								</AvGroup>
 							</TabPane>
 						</TabContent>
 					</ModalBody>
 					<ModalFooter>
-						<Button onClick={this.handleSubmit} color="primary">{ submitBtnLabel }</Button>
+						<Button type="submit" color="primary">{ submitBtnLabel }</Button>
 						{" "}
 						<Button color="secondary" onClick={toggle}>Cancel</Button>
 					</ModalFooter>
-				</Form>
+				</AvForm>
 			</Modal>
 		)
 	}

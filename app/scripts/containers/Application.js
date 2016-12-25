@@ -16,7 +16,7 @@ import {
 	Card,
 	CardBlock,
 } from "reactstrap"
-import Gathering from "../../../lib/gathering"
+import Gathering from "../firebase/gathering"
 import Navbar from "../components/Navbar.js"
 import * as UserActions from "../actions/UserActions"
 import { userSelector } from "../selectors/userSelector"
@@ -31,25 +31,22 @@ class App extends React.Component {
 			onlineUsers: [],
 		}
 		this.initFirebase = this.initFirebase.bind(this)
-		this.handleLogin = this.handleLogin.bind(this)
 		this.handleRegistration = this.handleRegistration.bind(this)
-		this.handleLogout = this.handleLogout.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleKeyPress = this.handleKeyPress.bind(this)
-		this.componentWillMount = this.componentWillMount.bind(this)
 		this.clearMessages = this.clearMessages.bind(this)
 	}
 
 	componentWillMount() {
 		firebase.auth().onAuthStateChanged((user) => {
-			if (user) {
+			if (user && user.displayName) { // registered and logged in user does not have displayName
 				this.onlineUsers.join(user.uid, user.displayName)
-				this.props.dispatch(UserActions.loginUser(user)) // user is signed in
+				this.props.dispatch(UserActions.loginUser(user))
 				console.info("User is signed in.", this.props.user)
 			} else {
 				this.onlineUsers.leave()
-				this.props.dispatch(UserActions.logoutUser()) // no user is signed in
+				this.props.dispatch(UserActions.logoutUser())
 				console.info("No user is signed in.")
 			}
 		})
@@ -57,8 +54,8 @@ class App extends React.Component {
 	}
 
 	initFirebase() {
-		this.messagesRef = firebase.database().ref("messages")
 		const messages = []
+		this.messagesRef = firebase.database().ref("messages")
 		this.messagesRef.on("child_added", (dataSnapshot) => {
 			messages.push(dataSnapshot.val())
 			this.setState({
@@ -74,29 +71,33 @@ class App extends React.Component {
 	}
 
 	handleLogin(email, password) {
-		firebase.auth().signInWithEmailAndPassword(email, password)
-			.catch(error => (console.error(error.code, error.message)))
-	}
-
-	handleRegistration(email, password, userName) {
-		const { dispatch } = this.props
-
-		firebase.auth().createUserWithEmailAndPassword(email, password)
-			.then(() => {
-				const user = firebase.auth().currentUser
-				user.updateProfile({
-					displayName: userName,
-				}).then(() => {
-					dispatch(UserActions.loginUser(user))
-				}, (error) => {
-					console.error(error)
-				})
-			})
+		firebase.auth()
+			.signInWithEmailAndPassword(email, password)
 			.catch(error => (console.error(error.code, error.message)))
 	}
 
 	handleLogout() {
 		firebase.auth().signOut()
+	}
+
+	handleRegistration(email, password, userName) {
+		const { dispatch } = this.props
+
+		firebase.auth()
+			.createUserWithEmailAndPassword(email, password)
+			.then(() => {
+				const user = firebase.auth().currentUser
+				user.updateProfile({
+					displayName: userName,
+				}).then(
+					() => {
+						this.onlineUsers.join(user.uid, user.displayName)
+						dispatch(UserActions.loginUser(user))
+					},
+					error => console.error(error),
+				)
+			})
+			.catch(error => (console.error(error.code, error.message)))
 	}
 
 	handleChange(e) {

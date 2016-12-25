@@ -15,7 +15,8 @@ export default class Navbar extends React.Component {
 		this.handleLogout = this.handleLogout.bind(this)
 	}
 
-	toggleLoginModal() {
+	toggleLoginModal(e) {
+		if (e) e.preventDefault()
 		this.setState({
 			loginModal: !this.state.loginModal,
 		})

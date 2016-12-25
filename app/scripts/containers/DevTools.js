@@ -4,7 +4,7 @@ import LogMonitor from "redux-devtools-log-monitor" // eslint-disable-line impor
 import DockMonitor from "redux-devtools-dock-monitor" // eslint-disable-line import/no-extraneous-dependencies
 
 export default createDevTools(
-	<DockMonitor toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q">
+	<DockMonitor defaultIsVisible={false} toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q">
 		<LogMonitor />
 	</DockMonitor>,
 )
