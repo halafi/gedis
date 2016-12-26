@@ -93,3 +93,25 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.message-enter {
+  opacity: 0.01;
+  transform: translate(10px, 0);
+}
+
+.message-enter.message-enter-active {
+  opacity: 1;
+  transition: all 200ms ease;
+  transform: translate(0, 0);
+}
+
+.message-leave {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.message-leave.message-leave-active {
+  opacity: 0.01;
+  transition: all 100ms cubic-bezier(.22,.14,0,1);
+  transform: translate(0, 10px);
+}

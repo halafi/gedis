@@ -5,7 +5,7 @@ import ReactFireMixin from "reactfire"
 import firebase from "firebase"
 import moment from "moment"
 import { List } from "immutable"
-import { Container, Row, Col, Card, CardBlock } from "reactstrap"
+import { Container, Row, Col } from "reactstrap"
 import Gathering from "../firebase/gathering"
 import Navbar from "../components/Navbar.js"
 import * as UserActions from "../actions/UserActions"
@@ -26,7 +26,6 @@ class App extends React.Component {
 		this.handleRegistration = this.handleRegistration.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
-		this.handleKeyPress = this.handleKeyPress.bind(this)
 		this.clearMessages = this.clearMessages.bind(this)
 	}
 
@@ -97,8 +96,8 @@ class App extends React.Component {
 			.catch(error => (console.error(error.code, error.message)))
 	}
 
-	handleChange(e) {
-		this.setState({ text: e.target.value })
+	handleChange(val) {
+		this.setState({ text: val })
 	}
 
 	handleSubmit(e) {
@@ -166,12 +165,6 @@ class App extends React.Component {
 		}
 	}
 
-	handleKeyPress(target) {
-		if (target.charCode === 13) {
-			this.handleSubmit(null)
-		}
-	}
-
 	clearMessages() {
 		this.messagesRef.remove().then(() => {
 			console.log("Remove succeeded.")
@@ -199,7 +192,6 @@ class App extends React.Component {
 							<ChatWindow messages={messages}/>
 							<InputBar
 								value={this.state.text}
-								onKeyPress={this.handleKeyPress}
 								onSubmit={this.handleSubmit}
 								onChange={this.handleChange}
 							/>

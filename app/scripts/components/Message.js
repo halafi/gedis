@@ -1,12 +1,9 @@
 import React from "react"
-import Linkify, { linkify } from "react-linkify"
+import Linkify from "react-linkify"
 
 // cant use functional class for ref to work
 class Message extends React.Component {
 	render() {
-
-		console.log(linkify)
-
 		const { value, userName, time } = this.props
 		const isCommand = userName === "command"
 
@@ -15,7 +12,10 @@ class Message extends React.Component {
 				<div className={isCommand ? "_light message-content" : "message-content"}>
 					{isCommand &&
 						<span>
-							<span className="_strong"> Only visible to you</span>&nbsp;&nbsp;<span className="_veryLight _small">{time}</span><br/>
+							<span className="_strong">Only visible to you</span>
+							&nbsp;&nbsp;
+							<span className="_veryLight _small">{time}</span>
+							<br/>
 							{value}
 						</span>
 					}

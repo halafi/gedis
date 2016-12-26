@@ -1,6 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { Card, CardBlock } from "reactstrap"
+import ReactCSSTransitionGroup from "react-addons-css-transition-group"
 
 import Message from "./Message"
 
@@ -23,17 +24,23 @@ class ChatWindow extends React.Component {
 		return (
 			<Card>
 				<CardBlock className="responsiveHeight">
-					{messages.map((item, i) => (
-						<Message
-							key={i}
-							userName={item.user}
-							value={item.text}
-							time={item.time}
-							ref={(ref) => {
-								this[`_msg${i}`] = ref
-							}}
-						/>
-					))}
+					<ReactCSSTransitionGroup
+						transitionName="message"
+						transitionEnterTimeout={200}
+						transitionLeaveTimeout={100}
+					>
+						{messages.map((item, i) => (
+							<Message
+								key={i}
+								userName={item.user}
+								value={item.text}
+								time={item.time}
+								ref={(ref) => {
+									this[`_msg${i}`] = ref
+								}}
+							/>
+						))}
+					</ReactCSSTransitionGroup>
 				</CardBlock>
 			</Card>
 		)
