@@ -1,23 +1,19 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import { CardBlock } from "reactstrap"
+import { Card, CardBlock } from "reactstrap"
 
 import Message from "./Message"
 
 class ChatWindow extends React.Component {
 
 	shouldComponentUpdate(nextProps) {
-		if (nextProps.messages.size !== this.props.messages.size) {
-			return true
-		}
-		return nextProps.messages[nextProps.messages.size - 1] !== this.props.messages[this.props.messages.size - 1]
+		return nextProps.messages !== this.props.messages
 	}
 
 	componentDidUpdate(nextProps) {
-		// Scroll as new elements come along
 		const node = ReactDOM.findDOMNode(this[`_msg${nextProps.messages.size - 1}`])
 		if (node) {
-			node.scrollIntoView()
+			node.scrollIntoView() // Scroll as new elements come along
 		}
 	}
 
@@ -25,19 +21,21 @@ class ChatWindow extends React.Component {
 		const { messages } = this.props
 
 		return (
-			<CardBlock className="chat">
-				{messages.map((item, i) => (
-					<Message
-						key={i}
-						userName={item.user}
-						value={item.text}
-						time={item.time}
-						ref={(ref) => {
-							this[`_msg${i}`] = ref
-						}}
-					/>
-				))}
-			</CardBlock>
+			<Card>
+				<CardBlock className="responsiveHeight">
+					{messages.map((item, i) => (
+						<Message
+							key={i}
+							userName={item.user}
+							value={item.text}
+							time={item.time}
+							ref={(ref) => {
+								this[`_msg${i}`] = ref
+							}}
+						/>
+					))}
+				</CardBlock>
+			</Card>
 		)
 	}
 }

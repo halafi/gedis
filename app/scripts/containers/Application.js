@@ -1,28 +1,18 @@
 import React from "react"
-import ReactDOM	from "react-dom"
 import { connect } from "react-redux"
 import reactMixin from "react-mixin"
 import ReactFireMixin from "reactfire"
 import firebase from "firebase"
 import moment from "moment"
-import _ from "lodash"
-import { Record, List } from "immutable"
-import {
-	Container,
-	Button,
-	Row,
-	Col,
-	InputGroup,
-	Input,
-	InputGroupButton,
-	Card,
-	CardBlock,
-} from "reactstrap"
+import { List } from "immutable"
+import { Container, Row, Col, Card, CardBlock } from "reactstrap"
 import Gathering from "../firebase/gathering"
 import Navbar from "../components/Navbar.js"
 import * as UserActions from "../actions/UserActions"
 import { userSelector } from "../selectors/userSelector"
 import ChatWindow from "../components/ChatWindow"
+import InputBar from "../components/InputBar"
+import SidePanel from "../components/SidePanel"
 
 class App extends React.Component {
 	constructor(props) {
@@ -59,7 +49,12 @@ class App extends React.Component {
 		const messages = []
 		this.messagesRef = firebase.database().ref("messages")
 		this.messagesRef.on("child_added", (dataSnapshot) => {
-			messages.push(dataSnapshot.val())
+			const msg = dataSnapshot.val()
+			if (messages.length > 0 && msg.user === messages[messages.length - 1].user) {
+				messages[messages.length - 1].text += `\n${msg.text}`
+			} else {
+				messages.push(dataSnapshot.val())
+			}
 			this.setState({
 				messages: new List(messages),
 			})
@@ -112,15 +107,39 @@ class App extends React.Component {
 
 		if (e) e.preventDefault()
 		if (text.length > 0) {
-			if (text[0] === "/") {
+			if (text[0] === "/") { // command
+				let updateOnly = false
+				if (messages.size > 0 && messages.get(messages.size - 1).user === "command") {
+					updateOnly = true
+				}
 				if (text === "/clear") {
 					this.clearMessages()
 				} else if (text === "/help") {
+					if (updateOnly) {
+						this.setState({
+							text: "",
+							messages: messages.set(messages.size - 1, {
+								user: "command",
+								text: "Commands begin with /. You can use /clear to delete history of all messages.",
+								time: moment().format("HH:mm"),
+							}),
+						})
+					} else {
+						this.setState({
+							text: "",
+							messages: messages.push({
+								user: "command",
+								text: "Commands begin with /. You can use /clear to delete history of all messages.",
+								time: moment().format("HH:mm"),
+							}),
+						})
+					}
+				} else if (updateOnly) {
 					this.setState({
 						text: "",
-						messages: messages.push({
+						messages: messages.set(messages.size - 1, {
 							user: "command",
-							text: "Commands begin with /. You can use /clear to delete history of all messages.",
+							text: `${text} is not a valid command. To see a list of available commands use /help.`,
 							time: moment().format("HH:mm"),
 						}),
 					})
@@ -134,10 +153,7 @@ class App extends React.Component {
 						}),
 					})
 				}
-			} else {
-				// if (messages[messages.length - 1].user === user.displayName) {
-					// TODO merge messages
-				// }
+			} else { // normal message
 				this.messagesRef.push({
 					user: user.displayName,
 					text,
@@ -171,53 +187,25 @@ class App extends React.Component {
 		const { user } = this.props
 		const { messages, onlineUsers } = this.state
 
-		const onlineUsersCount = onlineUsers ? Object.keys(onlineUsers).length : 0
-		const onlineUsersEl = _.map(onlineUsers, (u, i) => {
-			return (
-				<div key={i}>
-					{u}
-				</div>
-			)
-		})
-
 		return (
 			<Container>
 				<Navbar user={user} onLogout={this.handleLogout} onLogin={this.handleLogin} onRegistration={this.handleRegistration} />
-				<Row>
-					<Col xs="2">
-						<Card>
-							<CardBlock className="chat">
-								<small>
-									<strong>Online</strong><br/>
-									{onlineUsersEl}
-								</small>
-							</CardBlock>
-						</Card>
-					</Col>
-					<Col xs="10">
-						<Card>
+				{user.uid &&
+					<Row>
+						<Col xs="2">
+							<SidePanel onlineUsers={onlineUsers}/>
+						</Col>
+						<Col xs="10">
 							<ChatWindow messages={messages}/>
-						</Card>
-					</Col>
-				</Row>
-				<Row>
-					<Col xs="12">
-						<InputGroup size="md">
-							<InputGroupButton>
-								<Button disabled onClick={this.handleSubmit}>+</Button>
-							</InputGroupButton>
-							<Input
-								placeholder="Message"
+							<InputBar
 								value={this.state.text}
-								onChange={this.handleChange}
 								onKeyPress={this.handleKeyPress}
+								onSubmit={this.handleSubmit}
+								onChange={this.handleChange}
 							/>
-							<InputGroupButton>
-								<Button onClick={this.handleSubmit}>Send</Button>
-							</InputGroupButton>
-						</InputGroup>
-					</Col>
-				</Row>
+						</Col>
+					</Row>
+				}
 			</Container>
 		)
 	}

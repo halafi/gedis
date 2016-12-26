@@ -63,7 +63,33 @@ body {
   margin-top: 15px;
 }
 
-.chat {
-  overflow: auto;
+.responsiveHeight {
+  overflow-y: auto;
+  overflow-x: hidden;
   height: 60vh;
+}
+
+.message {
+  border-radius: 0.25rem;
+  border: 1px solid $color-grey2;
+  margin: 8px 0;
+}
+
+.message:hover {
+  background-color: $color-grey1;
+  box-shadow: 2px 1px 4px $color-grey2;
+}
+
+.message-content {
+  padding: 8px;
+  font-size: $font-size-default;
+}
+
+.chatUser {
+  font-size: $font-size-default;
+  font-weight: 400;
+  width: 95px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -4,7 +4,6 @@ import reducers from "../reducers"
 import DevTools from "../containers/DevTools"
 
 export default function configureStore() {
-	console.log("configuring store for dev")
 	const store = createStore(reducers,
 		compose(
 			applyMiddleware(thunk),
