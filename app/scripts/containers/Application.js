@@ -1,11 +1,12 @@
 import React from "react"
-import ReactDOM from "react-dom"
+import ReactDOM	from "react-dom"
 import { connect } from "react-redux"
 import reactMixin from "react-mixin"
 import ReactFireMixin from "reactfire"
 import firebase from "firebase"
 import moment from "moment"
 import _ from "lodash"
+import { Record, List } from "immutable"
 import {
 	Container,
 	Button,
@@ -21,15 +22,15 @@ import Gathering from "../firebase/gathering"
 import Navbar from "../components/Navbar.js"
 import * as UserActions from "../actions/UserActions"
 import { userSelector } from "../selectors/userSelector"
-import Message from "../components/Message"
+import ChatWindow from "../components/ChatWindow"
 
 class App extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {
+		this.state = { // todo record
 			text: "",
-			messages: [],
-			onlineUsers: [],
+			messages: new List(),
+			onlineUsers: {},
 		}
 		this.initFirebase = this.initFirebase.bind(this)
 		this.handleRegistration = this.handleRegistration.bind(this)
@@ -54,31 +55,13 @@ class App extends React.Component {
 		this.initFirebase()
 	}
 
-	// componentDidMount() {
-	// 	this.handleResize()
-	//
-	// 	// Scroll to the bottom on initialization
-	// 	const len = this.props.messages.length - 1
-	// 	const node = ReactDOM.findDOMNode(this['_div' + len])
-	// 	if (node) {
-	// 		node.scrollIntoView()
-	// 	}
-	// }
-
-	componentDidUpdate() {
-		// Scroll as new elements come along
-		console.log(this.refs)
-		console.log(this.chat)
-		// this._chatDiv.scrollTop = 0
-	}
-
 	initFirebase() {
 		const messages = []
 		this.messagesRef = firebase.database().ref("messages")
 		this.messagesRef.on("child_added", (dataSnapshot) => {
 			messages.push(dataSnapshot.val())
 			this.setState({
-				messages,
+				messages: new List(messages),
 			})
 		})
 		this.onlineUsers = new Gathering(firebase.database())
@@ -133,24 +116,22 @@ class App extends React.Component {
 				if (text === "/clear") {
 					this.clearMessages()
 				} else if (text === "/help") {
-					messages.push({
-						user: "command",
-						text: "Commands begin with /. You can use /clear to delete history of all messages.",
-						time: moment().format("HH:mm"),
-					})
 					this.setState({
 						text: "",
-						messages,
+						messages: messages.push({
+							user: "command",
+							text: "Commands begin with /. You can use /clear to delete history of all messages.",
+							time: moment().format("HH:mm"),
+						}),
 					})
 				} else {
-					messages.push({
-						user: "command",
-						text: `${text} is not a valid command. To see a list of available commands use /help.`,
-						time: moment().format("HH:mm"),
-					})
 					this.setState({
 						text: "",
-						messages,
+						messages: messages.push({
+							user: "command",
+							text: `${text} is not a valid command. To see a list of available commands use /help.`,
+							time: moment().format("HH:mm"),
+						}),
 					})
 				}
 			} else {
@@ -180,7 +161,7 @@ class App extends React.Component {
 			console.log("Remove succeeded.")
 			this.setState({
 				text: "",
-				messages: [],
+				messages: new List(),
 			})
 			this.initFirebase()
 		})
@@ -190,14 +171,6 @@ class App extends React.Component {
 		const { user } = this.props
 		const { messages, onlineUsers } = this.state
 
-		const shownMessages = messages.map((item, i) => (
-			<Message
-				key={i}
-				userName={item.user}
-				value={item.text}
-				time={item.time}
-			/>
-		))
 		const onlineUsersCount = onlineUsers ? Object.keys(onlineUsers).length : 0
 		const onlineUsersEl = _.map(onlineUsers, (u, i) => {
 			return (
@@ -222,15 +195,9 @@ class App extends React.Component {
 						</Card>
 					</Col>
 					<Col xs="10">
-						{user.uid &&
-							<div>
-								<Card>
-									<CardBlock className="chat" ref={(chat) => { this.chat = chat }} >
-										{shownMessages}
-									</CardBlock>
-								</Card>
-							</div>
-						}
+						<Card>
+							<ChatWindow messages={messages}/>
+						</Card>
 					</Col>
 				</Row>
 				<Row>
