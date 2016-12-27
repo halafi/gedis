@@ -45,17 +45,25 @@ class App extends React.Component {
 	}
 
 	initFirebase() {
-		const messages = []
+		let messages = new List() // not merged messages
 		this.messagesRef = firebase.database().ref("messages")
 		this.messagesRef.on("child_added", (dataSnapshot) => {
 			const msg = dataSnapshot.val()
-			if (messages.length > 0 && msg.user === messages[messages.length - 1].user) {
-				messages[messages.length - 1].text += `\n${msg.text}`
+			if (messages.size > 0 && msg.user === messages.get(messages.size - 1).user) {
+				const editedMsg = messages.get(messages.size - 1)
+				editedMsg.text = `${editedMsg.text}\n${msg.text}`
+				messages = messages.set(messages.size - 1, editedMsg)
 			} else {
-				messages.push(dataSnapshot.val())
+				messages = messages.push(dataSnapshot.val())
 			}
 			this.setState({
-				messages: new List(messages),
+				messages: new List(messages.toJS()),
+			})
+		})
+		this.messagesRef.on("child_removed", () => { // fix this to support deletion of single messages
+			messages = new List()
+			this.setState({
+				messages,
 			})
 		})
 		this.onlineUsers = new Gathering(firebase.database())

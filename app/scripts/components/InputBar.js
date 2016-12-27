@@ -69,9 +69,9 @@ class InputBar extends React.Component {
 	render() {
 		return (
 			<InputGroup size="md">
-				<InputGroupButton>
-					<Button disabled>+</Button>
-				</InputGroupButton>
+				{/*<InputGroupButton>*/}
+					{/*<Button disabled>+</Button>*/}
+				{/*</InputGroupButton>*/}
 				<Input
 					placeholder="Message"
 					value={this.props.value}
