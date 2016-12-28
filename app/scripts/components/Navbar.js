@@ -1,4 +1,5 @@
 import React from "react"
+import firebase from "firebase"
 import { Navbar as BsNavbar, NavbarBrand, Nav, NavItem, NavLink } from "reactstrap"
 
 import LoginModal from "./LoginModal"
@@ -10,9 +11,6 @@ export default class Navbar extends React.Component {
 			loginModal: false,
 		}
 		this.toggleLoginModal = this.toggleLoginModal.bind(this)
-		this.handleLogin = this.handleLogin.bind(this)
-		this.handleRegistration = this.handleRegistration.bind(this)
-		this.handleLogout = this.handleLogout.bind(this)
 	}
 
 	toggleLoginModal(e) {
@@ -22,23 +20,13 @@ export default class Navbar extends React.Component {
 		})
 	}
 
-	handleLogin(email, password) {
-		this.props.onLogin(email, password)
-		this.toggleLoginModal()
-	}
-
-	handleRegistration(email, password, userName) {
-		this.props.onRegistration(email, password, userName)
-		this.toggleLoginModal()
-	}
-
 	handleLogout(e) {
 		e.preventDefault()
-		this.props.onLogout()
+		firebase.auth().signOut()
 	}
 
 	render() {
-		const { user } = this.props
+		const { user, dispatch } = this.props
 
 		return (
 			<BsNavbar color="faded" light>
@@ -58,8 +46,8 @@ export default class Navbar extends React.Component {
 				<LoginModal
 					open={this.state.loginModal}
 					toggle={this.toggleLoginModal}
-					onLogin={this.handleLogin}
-					onRegister={this.handleRegistration}
+					onlineUsers={this.props.onlineUsers}
+					dispatch={this.props.dispatch}
 				/>
 			</BsNavbar>
 		)
@@ -68,7 +56,6 @@ export default class Navbar extends React.Component {
 
 Navbar.propTypes = {
 	user: React.PropTypes.object,
-	onLogin: React.PropTypes.func,
-	onRegistration: React.PropTypes.func,
-	onLogout: React.PropTypes.func,
+	onlineUsers: React.PropTypes.object,
+	dispatch: React.PropTypes.func,
 }

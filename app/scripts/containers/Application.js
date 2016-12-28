@@ -23,7 +23,6 @@ class App extends React.Component {
 			onlineUsers: {},
 		}
 		this.initFirebase = this.initFirebase.bind(this)
-		this.handleRegistration = this.handleRegistration.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.clearMessages = this.clearMessages.bind(this)
@@ -72,36 +71,6 @@ class App extends React.Component {
 				onlineUsers: users,
 			})
 		})
-	}
-
-	handleLogin(email, password) {
-		firebase.auth()
-			.signInWithEmailAndPassword(email, password)
-			.catch(error => (console.error(error.code, error.message)))
-	}
-
-	handleLogout() {
-		firebase.auth().signOut()
-	}
-
-	handleRegistration(email, password, userName) {
-		const { dispatch } = this.props
-
-		firebase.auth()
-			.createUserWithEmailAndPassword(email, password)
-			.then(() => {
-				const user = firebase.auth().currentUser
-				user.updateProfile({
-					displayName: userName,
-				}).then(
-					() => {
-						this.onlineUsers.join(user.uid, user.displayName)
-						dispatch(UserActions.loginUser(user))
-					},
-					error => console.error(error),
-				)
-			})
-			.catch(error => (console.error(error.code, error.message)))
 	}
 
 	handleChange(val) {
@@ -185,18 +154,18 @@ class App extends React.Component {
 	}
 
 	render() {
-		const { user } = this.props
+		const { user, dispatch } = this.props
 		const { messages, onlineUsers } = this.state
 
 		return (
 			<Container>
-				<Navbar user={user} onLogout={this.handleLogout} onLogin={this.handleLogin} onRegistration={this.handleRegistration} />
+				<Navbar user={user} onlineUsers={this.onlineUsers} dispatch={dispatch} />
 				{user.uid &&
 					<Row>
-						<Col xs="2">
+						<Col xs="4" sm="4" md="3" lg="2">
 							<SidePanel onlineUsers={onlineUsers}/>
 						</Col>
-						<Col xs="10">
+						<Col xs="8" sm="8" md="9" lg="10">
 							<ChatWindow messages={messages}/>
 							<InputBar
 								value={this.state.text}

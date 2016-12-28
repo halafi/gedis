@@ -73,6 +73,8 @@ body {
   border-radius: 0.25rem;
   border: 1px solid $color-grey2;
   margin: 8px 0;
+  display: flex;
+  flex-direction: row;
 }
 
 .message:hover {
@@ -83,6 +85,13 @@ body {
 .message-content {
   padding: 8px;
   font-size: $font-size-default;
+}
+
+.message-avatar {
+  padding: 10px 0 10px 8px;
+  img {
+    width: 32px;
+  }
 }
 
 .chatUser {
@@ -96,7 +105,7 @@ body {
 
 .message-enter {
   opacity: 0.01;
-  transform: translate(10px, 0);
+  transform: translate(0, 10px);
 }
 
 .message-enter.message-enter-active {

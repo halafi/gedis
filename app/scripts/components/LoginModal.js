@@ -1,8 +1,8 @@
 import React from "react"
-import ReactFireMixin from "reactfire"
-import reactMixin from "react-mixin"
 import classnames from "classnames"
+import firebase from "firebase"
 import {
+	Alert,
 	Label,
 	Button,
 	Modal,
@@ -22,6 +22,8 @@ import {
 	AvFeedback,
 } from "availity-reactstrap-validation"
 
+import * as UserActions from "../actions/UserActions"
+
 
 class LoginModal extends React.Component {
 	constructor(props) {
@@ -32,8 +34,11 @@ class LoginModal extends React.Component {
 			email: "",
 			password: "",
 			confirmPassword: "",
+			error: null,
 		}
 		this.handleChange = this.handleChange.bind(this)
+		this.handleLogin = this.handleLogin.bind(this)
+		this.handleRegistration = this.handleRegistration.bind(this)
 		this.handleValidSubmit = this.handleValidSubmit.bind(this)
 	}
 
@@ -45,6 +50,7 @@ class LoginModal extends React.Component {
 				email: "",
 				password: "",
 				confirmPassword: "",
+				error: null,
 			})
 		}
 	}
@@ -57,8 +63,64 @@ class LoginModal extends React.Component {
 				email: "",
 				password: "",
 				confirmPassword: "",
+				error: null,
 			})
 		}
+	}
+
+	handleLogin() {
+		const { toggle } = this.props
+		const { email, password } = this.state
+
+		let hasErrors = false
+		this.setState({ error: null })
+
+		firebase.auth()
+			.signInWithEmailAndPassword(email, password)
+			.catch((error) => {
+				hasErrors = true
+				this.setState({ error })
+			})
+			.then(() => {
+				if (!hasErrors) {
+					toggle()
+				}
+			})
+	}
+
+	handleRegistration() {
+		const { dispatch, toggle, onlineUsers } = this.props
+		const { email, password, displayName } = this.state
+
+		let hasErrors = false
+		this.setState({ error: null })
+
+		firebase.auth()
+			.createUserWithEmailAndPassword(email, password)
+			.catch((error) => {
+				hasErrors = true
+				this.setState({ error })
+			})
+			.then(() => {
+				if (!hasErrors) {
+					const user = firebase.auth().currentUser
+					user.updateProfile({
+						displayName,
+					}).then(
+						() => {
+							onlineUsers.join(user.uid, user.displayName)
+							dispatch(UserActions.loginUser(user))
+							if (!hasErrors) {
+								toggle()
+							}
+						},
+						(error) => {
+							hasErrors = true
+							this.setState({ error })
+						},
+					)
+				}
+			})
 	}
 
 	handleChange(field, value) {
@@ -67,22 +129,22 @@ class LoginModal extends React.Component {
 
 	handleValidSubmit(event, values) {
 		if (this.state.activeTab === "1") {
-			this.props.onLogin(this.state.email, this.state.password)
+			this.handleLogin()
 		} else if (this.state.activeTab === "2") {
-			this.props.onRegister(this.state.email, this.state.password, this.state.displayName)
+			this.handleRegistration()
 		}
 	}
 
 	render() {
 		const { open, toggle } = this.props
-		const { email, password, confirmPassword, displayName, activeTab } = this.state
+		const { email, password, confirmPassword, displayName, activeTab, error } = this.state
 
 		const firstTabClasses = classnames({ active: activeTab === "1" })
 		const secondTabClasses = classnames({ active: activeTab === "2" })
 
 		const submitBtnLabel = activeTab === "1" ? "Log In" : "Register"
 		return (
-			<Modal isOpen={open} toggle={toggle}>
+			<Modal size="md" isOpen={open} toggle={toggle}>
 				<ModalHeader toggle={toggle}>Sign In</ModalHeader>
 				<AvForm onValidSubmit={this.handleValidSubmit}>
 					<Nav tabs style={{ "marginTop": "15px" }}>
@@ -98,6 +160,11 @@ class LoginModal extends React.Component {
 						</NavItem>
 					</Nav>
 					<ModalBody>
+						{error &&
+							<Alert color="danger">
+								<strong>Error!</strong> {error.message}
+							</Alert>
+						}
 						<TabContent activeTab={activeTab}>
 							<TabPane tabId="1">
 								<AvGroup>
@@ -178,13 +245,11 @@ class LoginModal extends React.Component {
 	}
 }
 
-reactMixin.onClass(LoginModal, ReactFireMixin)
-
 LoginModal.propTypes = {
 	open: React.PropTypes.bool.isRequired,
 	toggle: React.PropTypes.func.isRequired,
-	onLogin: React.PropTypes.func.isRequired,
-	onRegister: React.PropTypes.func.isRequired,
+	onlineUsers: React.PropTypes.object,
+	dispatch: React.PropTypes.func,
 }
 
 export default LoginModal

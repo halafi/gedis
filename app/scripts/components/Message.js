@@ -1,5 +1,6 @@
 import React from "react"
 import Linkify from "react-linkify"
+import classnames from "classnames"
 
 // cant use functional class for ref to work
 class Message extends React.Component {
@@ -7,9 +8,22 @@ class Message extends React.Component {
 		const { value, userName, time } = this.props
 		const isCommand = userName === "command"
 
+		const messageContentClasses = classnames(
+			"message-content", {
+				"_light": isCommand,
+			},
+		)
 		return (
 			<div className="message">
-				<div className={isCommand ? "_light message-content" : "message-content"}>
+				<div className="message-avatar">
+					{!isCommand &&
+						<img src="images/default_avatar.png"/>
+					}
+					{isCommand &&
+						<img src="images/default_blank.png" srcSet="images/default_blank@2x.png 2x"/>
+					}
+				</div>
+				<div className={messageContentClasses}>
 					{isCommand &&
 						<span>
 							<span className="_strong">Only visible to you</span>
