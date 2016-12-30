@@ -88,7 +88,7 @@ class App extends React.Component {
 				if (messages.size > 0 && messages.get(messages.size - 1).user === "command") {
 					updateOnly = true
 				}
-				if (text === "/clear") {
+				if (text === "/clearall") {
 					this.clearMessages()
 				} else if (text === "/help") {
 					if (updateOnly) {
@@ -97,7 +97,7 @@ class App extends React.Component {
 							messages: messages.set(messages.size - 1, {
 								user: "command",
 								text: "Commands begin with /. You can use /clear to delete history of all messages.",
-								time: moment().format("HH:mm"),
+								time: moment().format(),
 							}),
 						})
 					} else {
@@ -106,7 +106,7 @@ class App extends React.Component {
 							messages: messages.push({
 								user: "command",
 								text: "Commands begin with /. You can use /clear to delete history of all messages.",
-								time: moment().format("HH:mm"),
+								time: moment().format(),
 							}),
 						})
 					}
@@ -116,7 +116,7 @@ class App extends React.Component {
 						messages: messages.set(messages.size - 1, {
 							user: "command",
 							text: `${text} is not a valid command. To see a list of available commands use /help.`,
-							time: moment().format("HH:mm"),
+							time: moment().format(),
 						}),
 					})
 				} else {
@@ -125,7 +125,7 @@ class App extends React.Component {
 						messages: messages.push({
 							user: "command",
 							text: `${text} is not a valid command. To see a list of available commands use /help.`,
-							time: moment().format("HH:mm"),
+							time: moment().format(),
 						}),
 					})
 				}
@@ -133,7 +133,7 @@ class App extends React.Component {
 				this.messagesRef.push({
 					user: user.displayName,
 					text,
-					time: moment().format("HH:mm"),
+					time: moment().format(),
 				})
 				this.setState({
 					text: "",

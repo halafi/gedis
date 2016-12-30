@@ -1,11 +1,39 @@
 import React from "react"
 import Linkify from "react-linkify"
 import classnames from "classnames"
+import moment from "moment"
+import _ from "lodash"
+
+import { Tooltip } from "reactstrap"
 
 // cant use functional class for ref to work
 class Message extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			tooltipOpen: false,
+		}
+		this.toggleTooltip = this.toggleTooltip.bind(this)
+	}
+
+	toggleTooltip() {
+		this.setState({
+			tooltipOpen: !this.state.tooltipOpen,
+		})
+	}
+
+	componentWillMount() {
+		const id = _.uniqueId("messageTime_")
+		this.setState({ uniqId: id })
+	}
+
 	render() {
 		const { value, userName, time } = this.props
+		const { tooltipOpen, uniqId } = this.state
+
+		const shortDate = moment(time).format("LT")
+		const longDate = moment(time).calendar()
+
 		const isCommand = userName === "command"
 
 		const messageContentClasses = classnames(
@@ -17,10 +45,10 @@ class Message extends React.Component {
 			<div className="message">
 				<div className="message-avatar">
 					{!isCommand &&
-						<img src="images/default_avatar.png"/>
+						<img className="userAvatar" src="images/default_avatar.png"/>
 					}
 					{isCommand &&
-						<img src="images/default_blank.png" srcSet="images/default_blank@2x.png 2x"/>
+						<img className="userAvatar" src="images/default_blank.png" srcSet="images/default_blank@2x.png 2x"/>
 					}
 				</div>
 				<div className={messageContentClasses}>
@@ -28,14 +56,19 @@ class Message extends React.Component {
 						<span>
 							<span className="_strong">Only visible to you</span>
 							&nbsp;&nbsp;
-							<span className="_veryLight _small">{time}</span>
+							<span className="_veryLight _small">{shortDate}</span>
 							<br/>
 							{value}
 						</span>
 					}
 					{!isCommand &&
 						<span>
-							<span className="_strong">{userName}</span>&nbsp;&nbsp;<span className="_veryLight _small">{time}</span><br/>
+							<span className="_strong">{userName}</span>
+							&nbsp;&nbsp;
+							<span id={uniqId} className="_veryLight _small">
+								{shortDate}
+							</span>
+							<br/>
 							<span className="_lighter">
 								{value.split("\n").map((line, i) => (
 									<span key={i}>
@@ -43,6 +76,19 @@ class Message extends React.Component {
 									</span>
 								))}
 							</span>
+							<Tooltip
+								className="tooltip-light"
+								placement="top"
+								isOpen={tooltipOpen}
+								target={uniqId}
+								toggle={this.toggleTooltip}
+								delay={{
+									show: 300,
+									hide: 0,
+								}}
+							>
+								{longDate}
+							</Tooltip>
 						</span>
 					}
 				</div>

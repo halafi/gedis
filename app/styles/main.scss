@@ -89,9 +89,10 @@ body {
 
 .message-avatar {
   padding: 10px 0 10px 8px;
-  img {
-    width: 32px;
-  }
+}
+
+.userAvatar {
+  width: 32px;
 }
 
 .chatUser {
@@ -123,4 +124,13 @@ body {
   opacity: 0.01;
   transition: all 100ms cubic-bezier(.22,.14,0,1);
   transform: translate(0, 10px);
+}
+
+.tooltip-light {
+  color: $color-grey4;
+  font-size: $font-size-default;
+}
+
+.dropdown-item {
+  cursor: pointer;
 }
