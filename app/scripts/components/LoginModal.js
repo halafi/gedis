@@ -111,6 +111,12 @@ class LoginModal extends React.Component {
 							onlineUsers.join(user.uid, user.displayName)
 							dispatch(UserActions.loginUser(user))
 							if (!hasErrors) {
+								firebase.database().ref().child("users").child(user.uid)
+									.set({
+										displayName: user.displayName,
+										email: user.email,
+										photoURL: user.photoURL,
+									})
 								toggle()
 							}
 						},

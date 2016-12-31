@@ -3,15 +3,16 @@ import Linkify from "react-linkify"
 import classnames from "classnames"
 import moment from "moment"
 import _ from "lodash"
-
 import { Tooltip } from "reactstrap"
+import firebase from "firebase"
 
-// cant use functional class for ref to work
 class Message extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			tooltipOpen: false,
+			displayName: "",
+			photoURL: "images/default_avatar.png",
 		}
 		this.toggleTooltip = this.toggleTooltip.bind(this)
 	}
@@ -24,18 +25,26 @@ class Message extends React.Component {
 
 	componentWillMount() {
 		const id = _.uniqueId("messageTime_")
+		if (this.props.uid !== "command") {
+			firebase.database().ref("users").child(this.props.uid)
+				.once("value", (snap) => {
+					this.setState({
+						displayName: snap.val().displayName,
+						photoURL: snap.val().photoURL,
+					})
+				})
+		}
 		this.setState({ uniqId: id })
 	}
 
 	render() {
-		const { value, userName, time, photoURL } = this.props
-		console.log(photoURL)
-		const { tooltipOpen, uniqId } = this.state
+		const { value, time, uid } = this.props
+		const { tooltipOpen, uniqId, displayName, photoURL } = this.state
 
 		const shortDate = moment(time).format("LT")
 		const longDate = moment(time).calendar()
 
-		const isCommand = userName === "command"
+		const isCommand = uid === "command"
 
 		const messageContentClasses = classnames(
 			"message-content", {
@@ -49,7 +58,7 @@ class Message extends React.Component {
 						<img className="userAvatar" src={photoURL || "images/default_avatar.png"}/>
 					}
 					{isCommand &&
-						<img className="userAvatar" src="images/default_blank.png" srcSet="images/default_blank@2x.png 2x"/>
+						<img className="userAvatar" src="images/default_blank.png" />
 					}
 				</div>
 				<div className={messageContentClasses}>
@@ -64,7 +73,7 @@ class Message extends React.Component {
 					}
 					{!isCommand &&
 						<span>
-							<span className="_strong">{userName}</span>
+							<span className="_strong">{displayName}</span>
 							&nbsp;&nbsp;
 							<span id={uniqId} className="_veryLight _small">
 								{shortDate}
@@ -99,10 +108,9 @@ class Message extends React.Component {
 }
 
 Message.propTypes = {
-	value: React.PropTypes.string.isRequired,
-	userName: React.PropTypes.string.isRequired,
+	uid: React.PropTypes.string.isRequired,
 	time: React.PropTypes.string.isRequired,
-	photoURL: React.PropTypes.string,
+	value: React.PropTypes.string.isRequired,
 }
 
 export default Message

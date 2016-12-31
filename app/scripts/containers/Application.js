@@ -2,10 +2,11 @@ import React from "react"
 import { connect } from "react-redux"
 import reactMixin from "react-mixin"
 import ReactFireMixin from "reactfire"
-import firebase from "firebase"
 import moment from "moment"
 import { List } from "immutable"
 import { Container, Row, Col } from "reactstrap"
+import firebase from "firebase"
+
 import Gathering from "../firebase/gathering"
 import Navbar from "../components/Navbar.js"
 import * as UserActions from "../actions/UserActions"
@@ -48,7 +49,7 @@ class App extends React.Component {
 		this.messagesRef = firebase.database().ref("messages")
 		this.messagesRef.on("child_added", (dataSnapshot) => {
 			const msg = dataSnapshot.val()
-			if (messages.size > 0 && msg.user === messages.get(messages.size - 1).user) {
+			if (messages.size > 0 && msg.uid === messages.get(messages.size - 1).uid) {
 				const editedMsg = messages.get(messages.size - 1)
 				editedMsg.text = `${editedMsg.text}\n${msg.text}`
 				messages = messages.set(messages.size - 1, editedMsg)
@@ -85,7 +86,7 @@ class App extends React.Component {
 		if (text.length > 0) {
 			if (text[0] === "/") { // command
 				let updateOnly = false
-				if (messages.size > 0 && messages.get(messages.size - 1).user === "command") {
+				if (messages.size > 0 && messages.get(messages.size - 1).uid === "command") {
 					updateOnly = true
 				}
 				if (text === "/clearall") {
@@ -95,7 +96,7 @@ class App extends React.Component {
 						this.setState({
 							text: "",
 							messages: messages.set(messages.size - 1, {
-								user: "command",
+								uid: "command",
 								text: "Commands begin with /. You can use /clear to delete history of all messages.",
 								time: moment().format(),
 							}),
@@ -104,7 +105,7 @@ class App extends React.Component {
 						this.setState({
 							text: "",
 							messages: messages.push({
-								user: "command",
+								uid: "command",
 								text: "Commands begin with /. You can use /clear to delete history of all messages.",
 								time: moment().format(),
 							}),
@@ -114,7 +115,7 @@ class App extends React.Component {
 					this.setState({
 						text: "",
 						messages: messages.set(messages.size - 1, {
-							user: "command",
+							uid: "command",
 							text: `${text} is not a valid command. To see a list of available commands use /help.`,
 							time: moment().format(),
 						}),
@@ -123,7 +124,7 @@ class App extends React.Component {
 					this.setState({
 						text: "",
 						messages: messages.push({
-							user: "command",
+							uid: "command",
 							text: `${text} is not a valid command. To see a list of available commands use /help.`,
 							time: moment().format(),
 						}),
@@ -131,10 +132,9 @@ class App extends React.Component {
 				}
 			} else { // normal message
 				this.messagesRef.push({
-					user: user.displayName,
+					uid: user.uid,
 					text,
 					time: moment().format(),
-					photoURL: user.photoURL,
 				})
 				this.setState({
 					text: "",

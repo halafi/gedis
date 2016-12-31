@@ -13,6 +13,7 @@ module.exports = {
 	},
 	devtool: "source-map",
 	module: {
+		plugins: ["transform-object-rest-spread"],
 		loaders: [
 			{
 				test: /\.js$/,

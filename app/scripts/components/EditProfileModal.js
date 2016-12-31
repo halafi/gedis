@@ -1,6 +1,6 @@
 import React from "react"
-import firebase from "firebase"
 import FileUploader from "react-firebase-file-uploader"
+import firebase from "firebase"
 import {
 	Button,
 	Modal,
@@ -112,6 +112,12 @@ class EditProfileModal extends React.Component {
 				onlineUsers.join(user.uid, user.displayName)
 				dispatch(UserActions.loginUser(user))
 				if (!hasErrors) {
+					firebase.database().ref().child("users").child(user.uid)
+						.set({
+							displayName: user.displayName,
+							email: user.email,
+							photoURL: user.photoURL,
+						})
 					toggle()
 				}
 			}, (error) => {

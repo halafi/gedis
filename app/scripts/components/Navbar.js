@@ -1,6 +1,6 @@
 import React from "react"
-import firebase from "firebase"
 import { Navbar as BsNavbar, NavbarBrand, Nav, NavItem, NavLink, NavDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap"
+import firebase from "firebase"
 
 import LoginModal from "./LoginModal"
 import EditProfileModal from "./EditProfileModal"

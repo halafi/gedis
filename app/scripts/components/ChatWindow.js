@@ -32,10 +32,9 @@ class ChatWindow extends React.Component {
 						{messages.map((item, i) => (
 							<Message
 								key={i}
-								userName={item.user}
-								value={item.text}
+								uid={item.uid}
 								time={item.time}
-								photoURL={item.photoURL}
+								value={item.text}
 								ref={(ref) => {
 									this[`_msg${i}`] = ref
 								}}
