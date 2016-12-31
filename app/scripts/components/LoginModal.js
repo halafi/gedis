@@ -37,8 +37,8 @@ class LoginModal extends React.Component {
 			error: null,
 		}
 		this.handleChange = this.handleChange.bind(this)
-		this.handleLogin = this.handleLogin.bind(this)
-		this.handleRegistration = this.handleRegistration.bind(this)
+		this.login = this.login.bind(this)
+		this.register = this.register.bind(this)
 		this.handleValidSubmit = this.handleValidSubmit.bind(this)
 	}
 
@@ -68,7 +68,7 @@ class LoginModal extends React.Component {
 		}
 	}
 
-	handleLogin() {
+	login() {
 		const { toggle } = this.props
 		const { email, password } = this.state
 
@@ -88,7 +88,7 @@ class LoginModal extends React.Component {
 			})
 	}
 
-	handleRegistration() {
+	register() {
 		const { dispatch, toggle, onlineUsers } = this.props
 		const { email, password, displayName } = this.state
 
@@ -127,11 +127,11 @@ class LoginModal extends React.Component {
 		this.setState({ [field]: value })
 	}
 
-	handleValidSubmit(event, values) {
+	handleValidSubmit() {
 		if (this.state.activeTab === "1") {
-			this.handleLogin()
+			this.login()
 		} else if (this.state.activeTab === "2") {
-			this.handleRegistration()
+			this.register()
 		}
 	}
 

@@ -15,7 +15,7 @@ configureFirebase()
 
 const store = configureStore()
 
-console.log(moment.locale()) // TODO check if is correct
+moment.locale(navigator.language)
 
 ReactDOM.render((
 	<Root store={store} />

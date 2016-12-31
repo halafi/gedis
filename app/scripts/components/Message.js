@@ -28,7 +28,8 @@ class Message extends React.Component {
 	}
 
 	render() {
-		const { value, userName, time } = this.props
+		const { value, userName, time, photoURL } = this.props
+		console.log(photoURL)
 		const { tooltipOpen, uniqId } = this.state
 
 		const shortDate = moment(time).format("LT")
@@ -45,7 +46,7 @@ class Message extends React.Component {
 			<div className="message">
 				<div className="message-avatar">
 					{!isCommand &&
-						<img className="userAvatar" src="images/default_avatar.png"/>
+						<img className="userAvatar" src={photoURL || "images/default_avatar.png"}/>
 					}
 					{isCommand &&
 						<img className="userAvatar" src="images/default_blank.png" srcSet="images/default_blank@2x.png 2x"/>
@@ -101,6 +102,7 @@ Message.propTypes = {
 	value: React.PropTypes.string.isRequired,
 	userName: React.PropTypes.string.isRequired,
 	time: React.PropTypes.string.isRequired,
+	photoURL: React.PropTypes.string,
 }
 
 export default Message

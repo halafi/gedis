@@ -7,6 +7,7 @@ export default (user = new User(), action) => {
 			.set("uid", action.user.uid)
 			.set("displayName", action.user.displayName)
 			.set("email", action.user.email)
+			.set("photoURL", action.user.photoURL)
 	case "LOGOUT":
 		return new User()
 	default:

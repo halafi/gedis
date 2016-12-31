@@ -134,6 +134,7 @@ class App extends React.Component {
 					user: user.displayName,
 					text,
 					time: moment().format(),
+					photoURL: user.photoURL,
 				})
 				this.setState({
 					text: "",

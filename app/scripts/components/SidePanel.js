@@ -26,7 +26,7 @@ class SidePanel extends React.Component {
 }
 
 SidePanel.propTypes = {
-	onlineUsers: React.PropTypes.object.isRequired,
+	onlineUsers: React.PropTypes.object,
 }
 
 export default SidePanel

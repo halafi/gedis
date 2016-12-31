@@ -3,15 +3,18 @@ import firebase from "firebase"
 import { Navbar as BsNavbar, NavbarBrand, Nav, NavItem, NavLink, NavDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap"
 
 import LoginModal from "./LoginModal"
+import EditProfileModal from "./EditProfileModal"
 
 export default class Navbar extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			loginModal: false,
+			editProfileModal: false,
 			dropdownOpen: false,
 		}
 		this.toggleLoginModal = this.toggleLoginModal.bind(this)
+		this.toggleEditProfileModal = this.toggleEditProfileModal.bind(this)
 		this.toggleDropdown = this.toggleDropdown.bind(this)
 	}
 
@@ -19,6 +22,13 @@ export default class Navbar extends React.Component {
 		if (e) e.preventDefault()
 		this.setState({
 			loginModal: !this.state.loginModal,
+		})
+	}
+
+	toggleEditProfileModal(e) {
+		if (e) e.preventDefault()
+		this.setState({
+			editProfileModal: !this.state.editProfileModal,
 		})
 	}
 
@@ -34,8 +44,8 @@ export default class Navbar extends React.Component {
 	}
 
 	render() {
-		const { user } = this.props
-		const { dropdownOpen } = this.state
+		const { user, onlineUsers, dispatch } = this.props
+		const { dropdownOpen, loginModal, editProfileModal } = this.state
 
 		return (
 			<BsNavbar color="faded" light>
@@ -50,11 +60,10 @@ export default class Navbar extends React.Component {
 					{user.uid &&
 						<NavDropdown size="sm" isOpen={dropdownOpen} toggle={this.toggleDropdown}>
 							<DropdownToggle nav>
-								<img className="userAvatar" src="images/default_avatar.png"/>
+								<img className="userAvatar" src={user.photoURL || "images/default_avatar.png"}/>
 							</DropdownToggle>
 							<DropdownMenu right>
-								<DropdownItem disabled>Edit Profile</DropdownItem>
-								<DropdownItem disabled>Account Settings</DropdownItem>
+								<DropdownItem href="#" onClick={this.toggleEditProfileModal}>Edit Profile</DropdownItem>
 								<DropdownItem divider />
 								<DropdownItem href="#" onClick={this.handleLogout}>Log Out</DropdownItem>
 							</DropdownMenu>
@@ -63,10 +72,17 @@ export default class Navbar extends React.Component {
 				</Nav>
 
 				<LoginModal
-					open={this.state.loginModal}
+					open={loginModal}
 					toggle={this.toggleLoginModal}
-					onlineUsers={this.props.onlineUsers}
-					dispatch={this.props.dispatch}
+					onlineUsers={onlineUsers}
+					dispatch={dispatch}
+				/>
+				<EditProfileModal
+					open={editProfileModal}
+					toggle={this.toggleEditProfileModal}
+					user={user}
+					onlineUsers={onlineUsers}
+					dispatch={dispatch}
 				/>
 			</BsNavbar>
 		)

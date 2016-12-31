@@ -1,6 +1,5 @@
 import React from "react"
 import { Provider } from "react-redux"
-import { Router, Route, hashHistory } from "react-router"
 
 import App from "./Application.js"
 import DevTools from "./DevTools"
@@ -11,9 +10,7 @@ class Root extends React.Component {
 		return (
 			<Provider store={store}>
 				<div>
-					<Router history={hashHistory}>
-						<Route path="/" component={App} />
-					</Router>
+					<App />
 					{process.env.NODE_ENV !== "production" &&
 						<DevTools />
 					}

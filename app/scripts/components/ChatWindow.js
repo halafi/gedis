@@ -35,6 +35,7 @@ class ChatWindow extends React.Component {
 								userName={item.user}
 								value={item.text}
 								time={item.time}
+								photoURL={item.photoURL}
 								ref={(ref) => {
 									this[`_msg${i}`] = ref
 								}}
