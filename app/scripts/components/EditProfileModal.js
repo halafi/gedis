@@ -33,7 +33,7 @@ class EditProfileModal extends React.Component {
 			avatar: "",
 			isUploading: false,
 			progress: 0,
-			avatarURL: "",
+			avatarURL: this.props.user.photoURL,
 		}
 		this.handleChange = this.handleChange.bind(this)
 		this.handleValidSubmit = this.handleValidSubmit.bind(this)
@@ -54,7 +54,7 @@ class EditProfileModal extends React.Component {
 				avatar: "",
 				isUploading: false,
 				progress: 0,
-				avatarURL: "",
+				avatarURL: this.props.user.photoURL,
 			})
 		}
 	}
@@ -83,7 +83,6 @@ class EditProfileModal extends React.Component {
 	}
 
 	handleUploadSuccess(filename) {
-		const VALID_FILE_EXTENSIONS = [".jpg", ".jpeg", ".bmp", ".gif", ".png"] // TODO validation
 		this.setState({
 			avatar: filename,
 			progress: 100,
@@ -102,38 +101,48 @@ class EditProfileModal extends React.Component {
 
 		const user = firebase.auth().currentUser
 		const credential = firebase.auth.EmailAuthProvider.credential(user.email, password)
-		user.reauthenticate(credential).then(() => {
-			onlineUsers.leave()
-			user.updateProfile({
-				displayName,
-				photoURL: avatarURL,
-			}).then(() => {
-				// onlineUsers.leave()
-				onlineUsers.join(user.uid, user.displayName)
-				dispatch(UserActions.loginUser(user))
-				if (!hasErrors) {
-					firebase.database().ref().child("users").child(user.uid)
-						.set({
-							displayName: user.displayName,
-							email: user.email,
-							photoURL: user.photoURL,
-						})
-					toggle()
-				}
+
+		const changesMade = this.props.user.displayName !== displayName || this.props.user.photoURL !== avatarURL
+
+		if (changesMade) {
+			user.reauthenticate(credential).then(() => {
+				onlineUsers.leave()
+				user.updateProfile({
+					displayName,
+					photoURL: avatarURL,
+				}).then(() => {
+					// onlineUsers.leave()
+					onlineUsers.join(user.uid, user.displayName)
+					dispatch(UserActions.loginUser(user))
+					if (!hasErrors) {
+						firebase.database().ref().child("users").child(user.uid)
+							.set({
+								displayName: user.displayName,
+								email: user.email,
+								photoURL: user.photoURL,
+							})
+						toggle()
+					}
+				}, (error) => {
+					hasErrors = true
+					this.setState({ error })
+				})
 			}, (error) => {
 				hasErrors = true
 				this.setState({ error })
+				// An error happened.
 			})
-		}, (error) => {
-			hasErrors = true
-			this.setState({ error })
-			// An error happened.
-		})
+		} else {
+			console.log("no changes")
+			toggle()
+		}
 	}
 
 	render() {
 		const { toggle, open } = this.props
-		const { email, password, displayName, error } = this.state
+		const { email, password, displayName, error, avatarURL } = this.state
+
+		const changesMade = this.props.user.displayName !== displayName || this.props.user.photoURL !== avatarURL
 
 		return (
 			<Modal size="md" isOpen={open} toggle={toggle}>
@@ -180,7 +189,7 @@ class EditProfileModal extends React.Component {
 								onProgress={this.handleProgress}
 							/>
 							<FormText color="muted">
-								Select and upload your picture (PROTIP: does not have to be you -&gt; GOMAD).
+								Select and upload your picture of choice.
 							</FormText>
 							{this.state.isUploading &&
 								<Progress value={this.state.progress} />
@@ -189,16 +198,20 @@ class EditProfileModal extends React.Component {
 								<img className="userAvatar" src={this.state.avatarURL} />
 							}
 						</FormGroup>
-						<AvGroup>
-							<Label for="userPassword">Confirm password</Label>
-							<AvInput
-								id="userPassword" type="password" name="password" placeholder="Password"
-								value={password}
-								onChange={(e) => { this.handleChange("password", e) }}
-								validate={{ minLength: { value: 6 }, required: true }}
-							/>
-							<AvFeedback>Password is too short</AvFeedback>
-						</AvGroup>
+						{changesMade &&
+							<AvGroup>
+								<Label for="userPassword">Confirm your password</Label>
+								<AvInput
+									id="userPassword" type="password" name="password" placeholder="Password"
+									value={password}
+									onChange={(e) => {
+										this.handleChange("password", e)
+									}}
+									validate={{ minLength: { value: 6 }, required: true }}
+								/>
+								<AvFeedback>Password is too short</AvFeedback>
+							</AvGroup>
+						}
 					</ModalBody>
 					<ModalFooter>
 						<Button type="submit" color="primary">Save</Button>
