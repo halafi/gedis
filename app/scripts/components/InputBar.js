@@ -3,7 +3,6 @@ import { List } from "immutable"
 
 import { Input, InputGroup, InputGroupButton, Button } from "reactstrap"
 
-// TODO if class not needed make functional
 class InputBar extends React.Component {
 	constructor(props) {
 		super(props)

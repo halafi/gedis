@@ -106,7 +106,7 @@ class App extends React.Component {
 							text: "",
 							messages: messages.push({
 								uid: "command",
-								text: "Commands begin with /. You can use /clear to delete history of all messages.",
+								text: "Commands begin with /. You can use /clearall to delete history of all messages.",
 								time: moment().format(),
 							}),
 						})

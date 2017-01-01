@@ -57,16 +57,13 @@ class Message extends React.Component {
 					{!isCommand &&
 						<img className="userAvatar" src={photoURL || "images/default_avatar.png"}/>
 					}
-					{isCommand &&
-						<img className="userAvatar" src="images/default_blank.png" />
-					}
 				</div>
 				<div className={messageContentClasses}>
 					{isCommand &&
 						<span>
 							<span className="_strong">Only visible to you</span>
 							&nbsp;&nbsp;
-							<span className="_veryLight _small">{shortDate}</span>
+							<span id={uniqId} className="_veryLight _small">{shortDate}</span>
 							<br/>
 							{value}
 						</span>
@@ -86,21 +83,21 @@ class Message extends React.Component {
 									</span>
 								))}
 							</span>
-							<Tooltip
-								className="tooltip-light"
-								placement="top"
-								isOpen={tooltipOpen}
-								target={uniqId}
-								toggle={this.toggleTooltip}
-								delay={{
-									show: 300,
-									hide: 0,
-								}}
-							>
-								{longDate}
-							</Tooltip>
 						</span>
 					}
+					<Tooltip
+						className="tooltip-light"
+						placement="top"
+						isOpen={tooltipOpen}
+						target={uniqId}
+						toggle={this.toggleTooltip}
+						delay={{
+							show: 300,
+							hide: 0,
+						}}
+					>
+						{longDate}
+					</Tooltip>
 				</div>
 			</div>
 		)

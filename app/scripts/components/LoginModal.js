@@ -24,7 +24,6 @@ import {
 
 import * as UserActions from "../actions/UserActions"
 
-
 class LoginModal extends React.Component {
 	constructor(props) {
 		super(props)
