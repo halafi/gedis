@@ -1,5 +1,6 @@
 import React from "react"
 import Linkify from "react-linkify"
+import ReactEmoji from "react-emoji"
 import classnames from "classnames"
 import moment from "moment"
 import _ from "lodash"
@@ -79,7 +80,7 @@ class Message extends React.Component {
 							<span className="_lighter">
 								{value.split("\n").map((line, i) => (
 									<span key={i}>
-										<Linkify properties={{ target: "_blank" }}>{line}</Linkify><br/>
+										<Linkify properties={{ target: "_blank" }}>{ReactEmoji.emojify(line)}</Linkify><br/>
 									</span>
 								))}
 							</span>

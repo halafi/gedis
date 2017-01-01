@@ -2,9 +2,10 @@ import React from "react"
 import { connect } from "react-redux"
 import reactMixin from "react-mixin"
 import ReactFireMixin from "reactfire"
+import ReactEmoji from "react-emoji"
 import moment from "moment"
 import { List } from "immutable"
-import { Container, Row, Col } from "reactstrap"
+import { Container, Row, Col, Card, CardBlock, CardTitle } from "reactstrap"
 import firebase from "firebase"
 
 import Gathering from "../firebase/gathering"
@@ -18,7 +19,7 @@ import SidePanel from "../components/SidePanel"
 class App extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = { // todo record
+		this.state = {
 			text: "",
 			messages: new List(),
 			onlineUsers: {},
@@ -89,7 +90,7 @@ class App extends React.Component {
 				if (messages.size > 0 && messages.get(messages.size - 1).uid === "command") {
 					updateOnly = true
 				}
-				if (text === "/clearall") {
+				if (text === "/clear") {
 					this.clearMessages()
 				} else if (text === "/help") {
 					if (updateOnly) {
@@ -106,7 +107,7 @@ class App extends React.Component {
 							text: "",
 							messages: messages.push({
 								uid: "command",
-								text: "Commands begin with /. You can use /clearall to delete history of all messages.",
+								text: "Commands begin with /. You can use /clear to delete history of all messages.",
 								time: moment().format(),
 							}),
 						})
@@ -173,6 +174,28 @@ class App extends React.Component {
 								onSubmit={this.handleSubmit}
 								onChange={this.handleChange}
 							/>
+						</Col>
+					</Row>
+				}
+				{!user.uid &&
+					<Row>
+						<Col xs="12">
+							<Card>
+								<CardBlock className="responsiveHeight">
+									<CardTitle>Yet another chat app</CardTitle>
+									Welcome to probably not the best chat application ever created.
+									<br/>
+									<br/>
+									<strong>Features</strong>
+									<ul>
+										<li>commands (/help)</li>
+										<li>message history (keyboard up/down)</li>
+										<li>emoji {ReactEmoji.emojify(":innocent: :heart:")} (:innocent: :heart:, more here: <a href="http://www.webpagefx.com/tools/emoji-cheat-sheet/">http://www.webpagefx.com/tools/emoji-cheat-sheet/</a>)</li>
+										<li>user avatars</li>
+									</ul>
+									Pretty much almost all the features normal chats have {ReactEmoji.emojify(":full_moon_with_face:")}
+								</CardBlock>
+							</Card>
 						</Col>
 					</Row>
 				}

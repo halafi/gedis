@@ -27,8 +27,9 @@ import * as UserActions from "../actions/UserActions"
 class LoginModal extends React.Component {
 	constructor(props) {
 		super(props)
+		console.log(this.props.loginModalTab)
 		this.state = {
-			activeTab: "1",
+			activeTab: this.props.loginModalTab,
 			displayName: "",
 			email: "",
 			password: "",
@@ -44,7 +45,7 @@ class LoginModal extends React.Component {
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.open && !this.props.open) {
 			this.setState({
-				activeTab: "1",
+				activeTab: nextProps.loginModalTab,
 				displayName: "",
 				email: "",
 				password: "",
@@ -254,6 +255,7 @@ LoginModal.propTypes = {
 	open: React.PropTypes.bool.isRequired,
 	toggle: React.PropTypes.func.isRequired,
 	onlineUsers: React.PropTypes.object,
+	loginModalTab: React.PropTypes.string.isRequired,
 	dispatch: React.PropTypes.func,
 }
 

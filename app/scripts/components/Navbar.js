@@ -12,10 +12,13 @@ export default class Navbar extends React.Component {
 			loginModal: false,
 			editProfileModal: false,
 			dropdownOpen: false,
+			loginModalTab: "1",
 		}
 		this.toggleLoginModal = this.toggleLoginModal.bind(this)
 		this.toggleEditProfileModal = this.toggleEditProfileModal.bind(this)
 		this.toggleDropdown = this.toggleDropdown.bind(this)
+		this.handleLogin = this.handleLogin.bind(this)
+		this.handleRegistration = this.handleRegistration.bind(this)
 	}
 
 	toggleLoginModal(e) {
@@ -43,9 +46,23 @@ export default class Navbar extends React.Component {
 		})
 	}
 
+	handleLogin() {
+		this.setState({
+			loginModalTab: "1",
+		})
+		this.toggleLoginModal()
+	}
+
+	handleRegistration() {
+		this.setState({
+			loginModalTab: "2",
+		})
+		this.toggleLoginModal()
+	}
+
 	render() {
 		const { user, onlineUsers, dispatch } = this.props
-		const { dropdownOpen, loginModal, editProfileModal } = this.state
+		const { dropdownOpen, loginModal, editProfileModal, loginModalTab } = this.state
 
 		return (
 			<BsNavbar color="faded" light>
@@ -53,9 +70,14 @@ export default class Navbar extends React.Component {
 
 				<Nav className="float-xs-right" navbar>
 					{!user.uid &&
-					<NavItem>
-						<NavLink href="#" onClick={this.toggleLoginModal}>Log in</NavLink>
-					</NavItem>
+						<div>
+							<NavItem>
+								<NavLink href="#" onClick={this.handleRegistration}>Registration</NavLink>
+							</NavItem>
+							<NavItem>
+								<NavLink href="#" onClick={this.handleLogin}>Log in</NavLink>
+							</NavItem>
+						</div>
 					}
 					{user.uid &&
 						<NavDropdown size="sm" isOpen={dropdownOpen} toggle={this.toggleDropdown}>
@@ -76,6 +98,7 @@ export default class Navbar extends React.Component {
 					toggle={this.toggleLoginModal}
 					onlineUsers={onlineUsers}
 					dispatch={dispatch}
+					loginModalTab={loginModalTab}
 				/>
 				<EditProfileModal
 					open={editProfileModal}
