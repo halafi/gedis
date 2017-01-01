@@ -1,9 +1,11 @@
 import React from "react"
 import { Navbar as BsNavbar, NavbarBrand, Nav, NavItem, NavLink, NavDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap"
 import firebase from "firebase"
+import moment from "moment"
 
 import LoginModal from "./LoginModal"
 import EditProfileModal from "./EditProfileModal"
+import * as MessageTypes from "../constants/MessageTypes"
 
 export default class Navbar extends React.Component {
 	constructor(props) {
@@ -18,6 +20,7 @@ export default class Navbar extends React.Component {
 		this.toggleEditProfileModal = this.toggleEditProfileModal.bind(this)
 		this.toggleDropdown = this.toggleDropdown.bind(this)
 		this.handleLogin = this.handleLogin.bind(this)
+		this.handleLogout = this.handleLogout.bind(this)
 		this.handleRegistration = this.handleRegistration.bind(this)
 	}
 
@@ -37,6 +40,12 @@ export default class Navbar extends React.Component {
 
 	handleLogout(e) {
 		e.preventDefault()
+		const user = firebase.auth().currentUser
+		this.props.messagesRef.push({
+			uid: MessageTypes.WELCOME_BOT,
+			text: `:balloon: Our deer friend ${user.displayName} has left, may he find what he seeks outside.`,
+			time: moment().format(),
+		})
 		firebase.auth().signOut()
 	}
 
@@ -61,7 +70,7 @@ export default class Navbar extends React.Component {
 	}
 
 	render() {
-		const { user, onlineUsers, dispatch } = this.props
+		const { user, onlineUsers, dispatch, messagesRef } = this.props
 		const { dropdownOpen, loginModal, editProfileModal, loginModalTab } = this.state
 
 		return (
@@ -99,6 +108,7 @@ export default class Navbar extends React.Component {
 					onlineUsers={onlineUsers}
 					dispatch={dispatch}
 					loginModalTab={loginModalTab}
+					messagesRef={messagesRef}
 				/>
 				<EditProfileModal
 					open={editProfileModal}
@@ -115,5 +125,6 @@ export default class Navbar extends React.Component {
 Navbar.propTypes = {
 	user: React.PropTypes.object,
 	onlineUsers: React.PropTypes.object,
+	messagesRef: React.PropTypes.object,
 	dispatch: React.PropTypes.func,
 }

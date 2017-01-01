@@ -7,6 +7,8 @@ import _ from "lodash"
 import { Tooltip } from "reactstrap"
 import firebase from "firebase"
 
+import * as MessageTypes from "../constants/MessageTypes"
+
 class Message extends React.Component {
 	constructor(props) {
 		super(props)
@@ -26,7 +28,7 @@ class Message extends React.Component {
 
 	componentWillMount() {
 		const id = _.uniqueId("messageTime_")
-		if (this.props.uid !== "command") {
+		if (this.props.uid !== MessageTypes.COMMAND && this.props.uid !== MessageTypes.WELCOME_BOT) {
 			firebase.database().ref("users").child(this.props.uid)
 				.once("value", (snap) => {
 					this.setState({
@@ -45,7 +47,8 @@ class Message extends React.Component {
 		const shortDate = moment(time).format("LT")
 		const longDate = moment(time).calendar()
 
-		const isCommand = uid === "command"
+		const isCommand = uid === MessageTypes.COMMAND
+		const isWelcomeBot = uid === MessageTypes.WELCOME_BOT
 
 		const messageContentClasses = classnames(
 			"message-content", {
@@ -55,8 +58,11 @@ class Message extends React.Component {
 		return (
 			<div className="message">
 				<div className="message-avatar">
-					{!isCommand &&
+					{(!isCommand && !isWelcomeBot) &&
 						<img className="userAvatar" src={photoURL || "images/default_avatar.png"}/>
+					}
+					{(!isCommand && isWelcomeBot) &&
+						<img className="userAvatar" src={"images/doge_avatar.png"}/>
 					}
 				</div>
 				<div className={messageContentClasses}>
@@ -69,9 +75,26 @@ class Message extends React.Component {
 							{value}
 						</span>
 					}
-					{!isCommand &&
+					{(!isCommand && !isWelcomeBot) &&
 						<span>
 							<span className="_strong">{displayName}</span>
+							&nbsp;&nbsp;
+							<span id={uniqId} className="_veryLight _small">
+								{shortDate}
+							</span>
+							<br/>
+							<span className="_lighter">
+								{value.split("\n").map((line, i) => (
+									<span key={i}>
+										<Linkify properties={{ target: "_blank" }}>{ReactEmoji.emojify(line)}</Linkify><br/>
+									</span>
+								))}
+							</span>
+						</span>
+					}
+					{(!isCommand && isWelcomeBot) &&
+						<span>
+							<span className="_strong">Doge bot</span>
 							&nbsp;&nbsp;
 							<span id={uniqId} className="_veryLight _small">
 								{shortDate}

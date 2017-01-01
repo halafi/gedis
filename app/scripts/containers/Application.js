@@ -15,6 +15,7 @@ import { userSelector } from "../selectors/userSelector"
 import ChatWindow from "../components/ChatWindow"
 import InputBar from "../components/InputBar"
 import SidePanel from "../components/SidePanel"
+import * as MessageTypes from "../constants/MessageTypes"
 
 class App extends React.Component {
 	constructor(props) {
@@ -92,13 +93,22 @@ class App extends React.Component {
 				}
 				if (text === "/clear") {
 					this.clearMessages()
+				} else if (text.substr(0, text.indexOf(" ")) === "/doge") {
+					this.messagesRef.push({
+						uid: MessageTypes.WELCOME_BOT,
+						text: text.substr(text.indexOf(" ") + 1),
+						time: moment().format(),
+					})
+					this.setState({
+						text: "",
+					})
 				} else if (text === "/help") {
 					if (updateOnly) {
 						this.setState({
 							text: "",
 							messages: messages.set(messages.size - 1, {
-								uid: "command",
-								text: "Commands begin with /. You can use /clear to delete history of all messages.",
+								uid: MessageTypes.COMMAND,
+								text: "Commands begin with /. You can use '/clear' to delete history of all messagesor '/doge text' to speak doge.",
 								time: moment().format(),
 							}),
 						})
@@ -106,8 +116,8 @@ class App extends React.Component {
 						this.setState({
 							text: "",
 							messages: messages.push({
-								uid: "command",
-								text: "Commands begin with /. You can use /clear to delete history of all messages.",
+								uid: MessageTypes.COMMAND,
+								text: "Commands begin with /. You can use '/clear' to delete history of all messages or '/doge text' to speak doge.",
 								time: moment().format(),
 							}),
 						})
@@ -116,7 +126,7 @@ class App extends React.Component {
 					this.setState({
 						text: "",
 						messages: messages.set(messages.size - 1, {
-							uid: "command",
+							uid: MessageTypes.COMMAND,
 							text: `${text} is not a valid command. To see a list of available commands use /help.`,
 							time: moment().format(),
 						}),
@@ -125,7 +135,7 @@ class App extends React.Component {
 					this.setState({
 						text: "",
 						messages: messages.push({
-							uid: "command",
+							uid: MessageTypes.COMMAND,
 							text: `${text} is not a valid command. To see a list of available commands use /help.`,
 							time: moment().format(),
 						}),
@@ -161,7 +171,7 @@ class App extends React.Component {
 
 		return (
 			<Container>
-				<Navbar user={user} onlineUsers={this.onlineUsers} dispatch={dispatch} />
+				<Navbar user={user} onlineUsers={this.onlineUsers} dispatch={dispatch} messagesRef={this.messagesRef} />
 				{user.uid &&
 					<Row>
 						<Col xs="4" sm="4" md="3" lg="2">

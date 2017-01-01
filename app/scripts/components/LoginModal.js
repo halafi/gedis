@@ -1,6 +1,7 @@
 import React from "react"
 import classnames from "classnames"
 import firebase from "firebase"
+import moment from "moment"
 import {
 	Alert,
 	Label,
@@ -23,11 +24,11 @@ import {
 } from "availity-reactstrap-validation"
 
 import * as UserActions from "../actions/UserActions"
+import * as MessageTypes from "../constants/MessageTypes"
 
 class LoginModal extends React.Component {
 	constructor(props) {
 		super(props)
-		console.log(this.props.loginModalTab)
 		this.state = {
 			activeTab: this.props.loginModalTab,
 			displayName: "",
@@ -69,7 +70,7 @@ class LoginModal extends React.Component {
 	}
 
 	login() {
-		const { toggle } = this.props
+		const { toggle, messagesRef } = this.props
 		const { email, password } = this.state
 
 		let hasErrors = false
@@ -81,15 +82,20 @@ class LoginModal extends React.Component {
 				hasErrors = true
 				this.setState({ error })
 			})
-			.then(() => {
+			.then((user) => {
 				if (!hasErrors) {
+					messagesRef.push({
+						uid: MessageTypes.WELCOME_BOT,
+						text: `:bell: ${user.displayName} just came online, why don't you say bark to him?`,
+						time: moment().format(),
+					})
 					toggle()
 				}
 			})
 	}
 
 	register() {
-		const { dispatch, toggle, onlineUsers } = this.props
+		const { dispatch, toggle, onlineUsers, messagesRef } = this.props
 		const { email, password, displayName } = this.state
 
 		let hasErrors = false
@@ -117,6 +123,11 @@ class LoginModal extends React.Component {
 										email: user.email,
 										photoURL: user.photoURL,
 									})
+								messagesRef.push({
+									uid: MessageTypes.WELCOME_BOT,
+									text: `:loudspeaker: ${user.displayName} just came online for the very first time, this is a great day for dogmanity!`,
+									time: moment().format(),
+								})
 								toggle()
 							}
 						},
@@ -256,6 +267,7 @@ LoginModal.propTypes = {
 	toggle: React.PropTypes.func.isRequired,
 	onlineUsers: React.PropTypes.object,
 	loginModalTab: React.PropTypes.string.isRequired,
+	messagesRef: React.PropTypes.object.isRequired,
 	dispatch: React.PropTypes.func,
 }
 
